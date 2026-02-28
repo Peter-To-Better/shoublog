@@ -1,0 +1,96 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import { formatDate, getReadingTime } from '../utils/helpers';
+
+interface Props {
+  title: string;
+  pubDate: Date;
+  category: string;
+  tags: string[];
+  keywords?: string;
+  body: string;
+}
+
+const { title, pubDate, category, tags, keywords, body } = Astro.props;
+const readingTime = getReadingTime(body);
+---
+
+<BaseLayout title={title} keywords={keywords}>
+  <article class="max-w-3xl mx-auto px-4 sm:px-6 py-10">
+    <!-- Header -->
+    <header class="mb-10">
+      <div class="flex items-center gap-2 text-sm mb-4">
+        <a
+          href={`/categories/${category}`}
+          class="px-2.5 py-1 bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 rounded-md font-medium hover:bg-blue-100 dark:hover:bg-blue-900 transition-colors"
+        >
+          {category}
+        </a>
+        <span class="text-gray-300 dark:text-gray-600">&middot;</span>
+        <time datetime={pubDate.toISOString()} class="text-gray-500 dark:text-gray-400">
+          {formatDate(pubDate)}
+        </time>
+        <span class="text-gray-300 dark:text-gray-600">&middot;</span>
+        <span class="text-gray-500 dark:text-gray-400">{readingTime} min read</span>
+      </div>
+
+      <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white leading-tight mb-4">
+        {title}
+      </h1>
+
+      <div class="flex flex-wrap gap-2">
+        {tags.map((tag) => (
+          <a
+            href={`/tags/${tag}`}
+            class="px-2.5 py-1 text-sm text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 rounded-md hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950 transition-colors"
+          >
+            #{tag}
+          </a>
+        ))}
+      </div>
+    </header>
+
+    <!-- Content -->
+    <div class="prose prose-lg dark:prose-invert max-w-none">
+      <slot />
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-16 pt-8 border-t border-gray-100 dark:border-gray-800">
+      <!-- Buy Me a Coffee -->
+      <div class="text-center mb-8">
+        <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">如果這篇文章對你有幫助</p>
+        <a
+          href="https://www.buymeacoffee.com/shoublog"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-amber-800 bg-amber-50 dark:text-amber-200 dark:bg-amber-900/30 rounded-full hover:bg-amber-100 dark:hover:bg-amber-900/50 transition-colors"
+        >
+          <span>&#9749;</span>
+          Buy me a coffee
+        </a>
+      </div>
+
+      <!-- Giscus Comments -->
+      <div class="mt-10" id="comments">
+        <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-6">留言討論</h2>
+        <script
+          src="https://giscus.app/client.js"
+          data-repo="ShouShouRen/shoublog"
+          data-repo-id=""
+          data-category="General"
+          data-category-id=""
+          data-mapping="pathname"
+          data-strict="0"
+          data-reactions-enabled="1"
+          data-emit-metadata="0"
+          data-input-position="top"
+          data-theme="preferred_color_scheme"
+          data-lang="zh-TW"
+          crossorigin="anonymous"
+          async
+        ></script>
+      </div>
+    </footer>
+  </article>
+</BaseLayout>

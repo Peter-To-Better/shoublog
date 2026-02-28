@@ -1,0 +1,71 @@
+---
+import ThemeToggle from './ThemeToggle.astro';
+
+const navLinks = [
+  { href: '/', label: '首頁' },
+  { href: '/archives', label: '歸檔' },
+  { href: '/tags', label: '標籤' },
+];
+
+const currentPath = Astro.url.pathname;
+---
+
+<header class="sticky top-0 z-50 bg-white/80 dark:bg-gray-950/80 backdrop-blur-md border-b border-gray-100 dark:border-gray-800">
+  <nav class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+    <!-- Logo -->
+    <a href="/" class="flex items-center gap-2.5 group">
+      <!-- Inline SVG icon mark for crisp rendering -->
+      <svg class="w-9 h-9 shrink-0 transition-transform group-hover:scale-105" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="hg1" x1="0" y1="64" x2="64" y2="0">
+            <stop offset="0%" stop-color="#4338ca"/>
+            <stop offset="50%" stop-color="#2563eb"/>
+            <stop offset="100%" stop-color="#06b6d4"/>
+          </linearGradient>
+          <linearGradient id="hg2" x1="0" y1="48" x2="48" y2="0">
+            <stop offset="0%" stop-color="#06b6d4"/>
+            <stop offset="100%" stop-color="#22d3ee"/>
+          </linearGradient>
+        </defs>
+        <path d="M8 52 L18 44 L8 36" stroke="url(#hg1)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.35"/>
+        <path d="M22 42 L32 34 L22 26" stroke="url(#hg1)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.6"/>
+        <path d="M36 32 L46 24 L36 16" stroke="url(#hg2)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="52" cy="12" r="4.5" fill="#06b6d4"/>
+        <circle cx="52" cy="12" r="7" fill="#06b6d4" opacity="0.2"/>
+        <path d="M13 48 L27 34 L41 20 L52 12" stroke="url(#hg1)" stroke-width="1.5" stroke-dasharray="3 3" opacity="0.3"/>
+      </svg>
+      <div class="hidden sm:block">
+        <div class="text-sm leading-tight font-extrabold tracking-tight">
+          <span class="text-gray-900 dark:text-white">peter</span><span class="text-gray-400 dark:text-gray-500 font-light">-to-</span><span class="text-blue-600 dark:text-blue-400">better</span>
+        </div>
+        <div class="text-[10.5px] text-gray-400 dark:text-gray-500 leading-tight tracking-wide mt-0.5">一個變好變強的部落格</div>
+      </div>
+    </a>
+
+    <!-- Desktop Nav -->
+    <div class="flex items-center gap-1">
+      {navLinks.map(({ href, label }) => (
+        <a
+          href={href}
+          class:list={[
+            'px-3 py-2 rounded-lg text-sm font-medium transition-colors',
+            currentPath === href || (href !== '/' && currentPath.startsWith(href))
+              ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950'
+              : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800/50',
+          ]}
+        >
+          {label}
+        </a>
+      ))}
+      <a
+        href="https://github.com/ShouShouRen"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="px-3 py-2 rounded-lg text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+      >
+        GitHub
+      </a>
+      <ThemeToggle />
+    </div>
+  </nav>
+</header>

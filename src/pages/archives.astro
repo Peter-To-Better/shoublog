@@ -1,0 +1,55 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { formatDate } from '../utils/helpers';
+
+const posts = (await getCollection('posts'))
+  .filter((post) => !post.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const postsByYear = posts.reduce<Record<string, typeof posts>>((acc, post) => {
+  const year = post.data.pubDate.getFullYear().toString();
+  if (!acc[year]) acc[year] = [];
+  acc[year].push(post);
+  return acc;
+}, {});
+
+const years = Object.keys(postsByYear).sort((a, b) => Number(b) - Number(a));
+---
+
+<BaseLayout title="歸檔">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 py-10">
+    <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">歸檔</h1>
+    <p class="text-gray-500 dark:text-gray-400 mb-10">共 {posts.length} 篇文章</p>
+
+    {years.map((year) => (
+      <section class="mb-10">
+        <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-3">
+          <span>{year}</span>
+          <span class="text-sm font-normal text-gray-400">({postsByYear[year].length})</span>
+        </h2>
+        <ul class="space-y-3 border-l-2 border-gray-100 dark:border-gray-800 pl-6">
+          {postsByYear[year].map((post) => (
+            <li class="relative">
+              <div class="absolute -left-[29px] top-1.5 w-3 h-3 bg-white dark:bg-gray-950 border-2 border-gray-300 dark:border-gray-600 rounded-full" />
+              <a
+                href={`/posts/${post.slug}`}
+                class="group flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3"
+              >
+                <time
+                  datetime={post.data.pubDate.toISOString()}
+                  class="text-sm text-gray-400 dark:text-gray-500 shrink-0"
+                >
+                  {formatDate(post.data.pubDate)}
+                </time>
+                <span class="font-medium text-gray-700 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                  {post.data.title}
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))}
+  </div>
+</BaseLayout>

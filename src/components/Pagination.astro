@@ -1,0 +1,66 @@
+---
+interface Props {
+  currentPage: number;
+  totalPages: number;
+  baseUrl?: string;
+}
+
+const { currentPage, totalPages, baseUrl = '' } = Astro.props;
+
+function getPageUrl(page: number): string {
+  if (page === 1) return baseUrl || '/';
+  return `${baseUrl}/page/${page}`;
+}
+
+const pages: (number | '...')[] = [];
+for (let i = 1; i <= totalPages; i++) {
+  if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+    pages.push(i);
+  } else if (pages[pages.length - 1] !== '...') {
+    pages.push('...');
+  }
+}
+---
+
+{totalPages > 1 && (
+  <nav aria-label="分頁導航" class="flex items-center justify-center gap-1 mt-12">
+    {currentPage > 1 && (
+      <a
+        href={getPageUrl(currentPage - 1)}
+        class="px-3 py-2 text-sm rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+        aria-label="上一頁"
+      >
+        &larr; 上一頁
+      </a>
+    )}
+
+    {pages.map((page) =>
+      page === '...' ? (
+        <span class="px-2 py-2 text-sm text-gray-400">...</span>
+      ) : (
+        <a
+          href={getPageUrl(page)}
+          class:list={[
+            'w-10 h-10 flex items-center justify-center text-sm rounded-lg transition-colors',
+            page === currentPage
+              ? 'bg-blue-600 text-white font-medium'
+              : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800',
+          ]}
+          aria-current={page === currentPage ? 'page' : undefined}
+        >
+          {page}
+        </a>
+      )
+    )}
+
+    {currentPage < totalPages && (
+      <a
+        href={getPageUrl(currentPage + 1)}
+        class="px-3 py-2 text-sm rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+        aria-label="下一頁"
+      >
+        下一頁 &rarr;
+      </a>
+    )}
+  </nav>
+)}
