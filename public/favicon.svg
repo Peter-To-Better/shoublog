@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="g1" x1="0" y1="64" x2="64" y2="0">
+      <stop offset="0%" stop-color="#4338ca"/>
+      <stop offset="50%" stop-color="#2563eb"/>
+      <stop offset="100%" stop-color="#06b6d4"/>
+    </linearGradient>
+    <linearGradient id="g2" x1="0" y1="48" x2="48" y2="0">
+      <stop offset="0%" stop-color="#06b6d4"/>
+      <stop offset="100%" stop-color="#22d3ee"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Ascending code-bracket steps — the growth staircase -->
+  <!-- Step 1: bottom-left, largest bracket -->
+  <path d="M8 52 L18 44 L8 36" stroke="url(#g1)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.35"/>
+
+  <!-- Step 2: middle bracket -->
+  <path d="M22 42 L32 34 L22 26" stroke="url(#g1)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.6"/>
+
+  <!-- Step 3: top-right, sharpest bracket — the "now" -->
+  <path d="M36 32 L46 24 L36 16" stroke="url(#g2)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity="1"/>
+
+  <!-- Spark / breakthrough dot at the peak -->
+  <circle cx="52" cy="12" r="4.5" fill="#06b6d4"/>
+  <circle cx="52" cy="12" r="7" fill="#06b6d4" opacity="0.2"/>
+
+  <!-- Connecting growth line (dotted trajectory) -->
+  <path d="M13 48 L27 34 L41 20 L52 12" stroke="url(#g1)" stroke-width="1.5" stroke-dasharray="3 3" opacity="0.3"/>
+</svg>

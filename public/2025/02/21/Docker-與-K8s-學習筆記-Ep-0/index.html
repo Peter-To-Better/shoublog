@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"shouren-blog.lanya.dev","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-959LSCY0GX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-959LSCY0GX');
+</script>
+  <meta name="description" content="本篇重點了解什麼是 Docker ， Docker 為我們帶來什麼好處解決什麼問題？用生活化的方式帶你理解容器化技術，無論你是新手還是老手都能快速理解， Docker 為你在開發上帶來的便利性。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Docker 與 K8s 學習筆記 Ep-0">
+<meta property="og:url" content="https://shouren-blog.lanya.dev/2025/02/21/Docker-%E8%88%87-K8s-%E5%AD%B8%E7%BF%92%E7%AD%86%E8%A8%98-Ep-0/">
+<meta property="og:site_name" content="瘦瘦仁的前端部落">
+<meta property="og:description" content="本篇重點了解什麼是 Docker ， Docker 為我們帶來什麼好處解決什麼問題？用生活化的方式帶你理解容器化技術，無論你是新手還是老手都能快速理解， Docker 為你在開發上帶來的便利性。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://shouren-blog.lanya.dev/images/picnic-box.webp">
+<meta property="og:image" content="https://shouren-blog.lanya.dev/images/docker-logo.webp">
+<meta property="article:published_time" content="2025-02-21T13:39:15.000Z">
+<meta property="article:modified_time" content="2025-02-21T14:25:55.514Z">
+<meta property="article:author" content="ShouShouRen">
+<meta property="article:tag" content="Docker &amp; K8s">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://shouren-blog.lanya.dev/images/picnic-box.webp">
+
+<link rel="canonical" href="https://shouren-blog.lanya.dev/2025/02/21/Docker-%E8%88%87-K8s-%E5%AD%B8%E7%BF%92%E7%AD%86%E8%A8%98-Ep-0/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-TW'
+  };
+</script>
+
+  <title>Docker 與 K8s 學習筆記 Ep-0 | 瘦瘦仁的前端部落</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-959LSCY0GX"></script>
+    <script>
+      if (CONFIG.hostname === location.hostname) {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-959LSCY0GX');
+      }
+    </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">瘦瘦仁的前端部落</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">技術分享與成長的天地</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/2023/07/29/Welcome/#more" rel="section"><i class="fa fa-user fa-fw"></i>關於</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>標籤<span class="badge">5</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類<span class="badge">4</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔<span class="badge">17</span></a>
+
+  </li>
+        <li class="menu-item menu-item-github">
+
+    <a href="https://github.com/ShouShouRen" rel="external nofollow noopener noreferrer" target="_blank"><i class="fab fa-github fa-fw"></i>github</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://shouren-blog.lanya.dev/2025/02/21/Docker-%E8%88%87-K8s-%E5%AD%B8%E7%BF%92%E7%AD%86%E8%A8%98-Ep-0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/86337159?s=400&u=325f6940b3c1b446e26c490dd23abacb71a878cc&v=4">
+      <meta itemprop="name" content="ShouShouRen">
+      <meta itemprop="description" content="歡迎來到瘦瘦仁的前端部落！這裡是我專注於網頁相關技術的網站。我熱愛探索前端開發的無限可能，並樂於與大家分享我的學習心得與成長過程。在這個部落格中，你將找到有關 HTML、CSS、JavaScript、Vue.js、Bootstrap、Tailwind 和 Nuxt.js 等前端技術的深入文章。不論你是初學者還是有經驗的開發者，這裡都有適合你的內容。讓我們一同踏上前端之旅，共同探索這個不斷進化的領域吧！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="瘦瘦仁的前端部落">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Docker 與 K8s 學習筆記 Ep-0
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+              
+
+              <time title="創建時間：2025-02-21 21:39:15 / 修改時間：22:25:55" itemprop="dateCreated datePublished" datetime="2025-02-21T21:39:15+08:00">2025-02-21</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Docker-K8s/" itemprop="url" rel="index"><span itemprop="name">Docker & K8s</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="本篇重點"><a href="#本篇重點" class="headerlink" title="本篇重點"></a>本篇重點</h1><p>了解什麼是 Docker ， Docker 為我們帶來什麼好處解決什麼問題？用生活化的方式帶你理解容器化技術，無論你是新手還是老手都能快速理解， Docker 為你在開發上帶來的便利性。</p>
+<span id="more"></span>
+
+<h2 id="Docker-到底是什麼？"><a href="#Docker-到底是什麼？" class="headerlink" title="Docker 到底是什麼？"></a>Docker 到底是什麼？</h2><p>在軟體開發領域，大家或多或少都聽過 Docker。簡單來說，它是一種容器技術，用於創建和管理容器，讓應用程式更具可移植性並提升部署效率。等等，先別急！🤚 如果你對這句話還是不太理解，別擔心，接下來我會用生活化的例子來為你解釋。</p>
+<h2 id="什麼是容器？"><a href="#什麼是容器？" class="headerlink" title="什麼是容器？"></a>什麼是容器？</h2><p>在學習 Docker 之前，我們需要先了解什麼是容器，在軟體開發中，<strong>容器</strong>是一個標準化的軟體單元，它將應用程式及其運行環境打包在一起，確保應用程式在任何環境中都能以一致的方式執行，容器包含以下幾個關鍵元素：</p>
+<ul>
+<li><strong>應用程式原始碼</strong>：應用程式的核心部分，所有的程式碼和邏輯。</li>
+<li><strong>運行代碼所需的依賴項</strong>：這些是應用程式運行所需的函式庫、框架和其他工具。</li>
+<li><strong>執行應用程式的工具</strong>：這些工具確保應用程式能夠在容器中順利運行。</li>
+</ul>
+<p>容器的概念是為了解決<strong>環境差異</strong>問題，在傳統的開發流程中，應用程式在不同的環境（如開發、測試、生產）中可能會因為依賴項或配置的不同而產生不同的行為，容器將應用程式及其依賴項打包在一起，確保應用程式在任何環境中都能以相同的方式運行，從而提高開發和部署的可靠性與效率。</p>
+<h3 id="容器的優勢："><a href="#容器的優勢：" class="headerlink" title="容器的優勢："></a>容器的優勢：</h3><ol>
+<li><strong>一致性</strong>：無論在開發、測試還是生產環境中，應用程式的行為都是一致的。</li>
+<li><strong>隔離性</strong>：容器之間相互隔離，確保一個容器的問題不會影響其他容器。</li>
+<li><strong>可攜性</strong>：容器可以在任何支援容器技術的平台上運行，無需擔心環境差異。</li>
+<li><strong>資源效率</strong>：與虛擬機相比，容器更輕量級，啟動速度更快，資源消耗更少。</li>
+</ol>
+<p>通過使用容器，開發者可以更專注於應用程式的開發，而不必擔心環境配置的問題，提升開發效率和應用程式的穩定性。</p>
+<h2 id="舉一個使用容器的例子！"><a href="#舉一個使用容器的例子！" class="headerlink" title="舉一個使用容器的例子！"></a>舉一個使用容器的例子！</h2><p>假設我們在開發一個 Node.js 應用程式，Node.js 是一個允許在伺服器上運行 JavaScript 程式碼的環境，如果我們將應用程式封裝到 Docker 容器內，那麼該容器會包含：</p>
+<ul>
+<li>應用程式的原始碼</li>
+<li>Node.js 執行時</li>
+<li>其他必要的工具與依賴</li>
+</ul>
+<p>這樣，我們就能確保：</p>
+<ul>
+<li>容器內的 Node.js 版本始終一致</li>
+<li>執行環境固定，不會因系統不同而產生不一致行為</li>
+<li>可在任何支援 Docker 的環境中運行，無需額外安裝依賴</li>
+</ul>
+<h2 id="容器的比喻："><a href="#容器的比喻：" class="headerlink" title="容器的比喻："></a>容器的比喻：</h2><p>如果你還是不太了解怎麼辦？沒關係，下面有兩個例子可以給你更好的理解容器是什麼。</p>
+<h3 id="1-野餐籃"><a href="#1-野餐籃" class="headerlink" title="1.野餐籃"></a>1.野餐籃</h3><p><img src="/../images/picnic-box.webp" alt="野餐籃">(圖片取自網路)</p>
+<p>想像一下你要去公園野餐，你準備了一個野餐籃，裡面裝滿了：</p>
+<ul>
+<li>食物</li>
+<li>餐具</li>
+<li>杯子</li>
+<li>其他需要的物品</li>
+</ul>
+<p>無論你在哪裡打開這個野餐籃，裡面的東西都是一樣的，不會有任何驚喜，你甚至可以分享給朋友，確保他們可以享受到同樣的體驗。</p>
+<p>容器的概念與此類似，它將所有應用程式運行所需的內容打包在一起，確保無論在哪裡執行，環境都是一致的。</p>
+<h3 id="2-貨櫃（集裝箱）"><a href="#2-貨櫃（集裝箱）" class="headerlink" title="2.貨櫃（集裝箱）"></a>2.貨櫃（集裝箱）</h3><p><img src="/../images/docker-logo.webp" alt="Docker Logo">(圖片取自網路)</p>
+<p>如果你聽到「容器」，你可能會想到運輸用的貨櫃（這也是為什麼 Docker 的 Logo 上有很多貨櫃箱）。</p>
+<p>貨櫃有幾個特點：</p>
+<ul>
+<li>標準化：可以裝載不同類型的貨物，但結構固定</li>
+<li>獨立性：一個貨櫃的內容不會影響其他貨櫃</li>
+<li>可移植性：貨櫃可以放到不同的船或卡車上運輸，而不受影響</li>
+</ul>
+<p>Docker 容器也具備這些特性：</p>
+<ul>
+<li>它是標準化的軟體包</li>
+<li>它的執行環境是獨立的</li>
+<li>它可以運行在任何支援 Docker 的地方</li>
+</ul>
+<p>這樣，我們不需要額外安裝環境，也不用擔心依賴問題。</p>
+<h2 id="Docker-的角色"><a href="#Docker-的角色" class="headerlink" title="Docker 的角色"></a>Docker 的角色</h2><p>Docker 其實就是一個工具，它簡化了容器的創建與管理。</p>
+<ul>
+<li>現代作業系統內建對容器的支援，或能輕易安裝 Docker 來使用</li>
+<li>Docker 讓容器的建置、執行和管理變得簡單</li>
+</ul>
+<h2 id="結論"><a href="#結論" class="headerlink" title="結論"></a><strong>結論</strong></h2><p>Docker 讓應用程式能夠以容器的形式運行，確保環境的一致性、可移植性和獨立性。它的概念類似於野餐籃或貨櫃，將所有需要的東西打包好，無論在哪裡都能保證相同的執行結果。</p>
+<h1 id="延伸閱讀"><a href="#延伸閱讀" class="headerlink" title="延伸閱讀"></a>延伸閱讀</h1><ul>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://docs.docker.com/get-started/docker-overview/">Docker 官方文件 - What is Docker</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Docker-K8s/" rel="tag"># Docker & K8s</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/02/19/TypeScript-Ep-5/" rel="prev" title="TypeScript 從 0 開始 Ep-5">
+      <i class="fa fa-chevron-left"></i> TypeScript 從 0 開始 Ep-5
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2025/02/23/Docker-%E8%88%87-K8s-%E5%AD%B8%E7%BF%92%E7%AD%86%E8%A8%98-Ep-1/" rel="next" title="Docker 與 K8s 學習筆記 Ep 1">
+      Docker 與 K8s 學習筆記 Ep 1 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+        <div>
+          <a href="https://www.buymeacoffee.com/shoublog" target="_blank" rel="external nofollow noopener noreferrer">
+            <img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=☕&slug=shoublog&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff">
+          </a>
+        </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9C%AC%E7%AF%87%E9%87%8D%E9%BB%9E"><span class="nav-number">1.</span> <span class="nav-text">本篇重點</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Docker-%E5%88%B0%E5%BA%95%E6%98%AF%E4%BB%80%E9%BA%BC%EF%BC%9F"><span class="nav-number">1.1.</span> <span class="nav-text">Docker 到底是什麼？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E9%BA%BC%E6%98%AF%E5%AE%B9%E5%99%A8%EF%BC%9F"><span class="nav-number">1.2.</span> <span class="nav-text">什麼是容器？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%B9%E5%99%A8%E7%9A%84%E5%84%AA%E5%8B%A2%EF%BC%9A"><span class="nav-number">1.2.1.</span> <span class="nav-text">容器的優勢：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%88%89%E4%B8%80%E5%80%8B%E4%BD%BF%E7%94%A8%E5%AE%B9%E5%99%A8%E7%9A%84%E4%BE%8B%E5%AD%90%EF%BC%81"><span class="nav-number">1.3.</span> <span class="nav-text">舉一個使用容器的例子！</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%B9%E5%99%A8%E7%9A%84%E6%AF%94%E5%96%BB%EF%BC%9A"><span class="nav-number">1.4.</span> <span class="nav-text">容器的比喻：</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E9%87%8E%E9%A4%90%E7%B1%83"><span class="nav-number">1.4.1.</span> <span class="nav-text">1.野餐籃</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E8%B2%A8%E6%AB%83%EF%BC%88%E9%9B%86%E8%A3%9D%E7%AE%B1%EF%BC%89"><span class="nav-number">1.4.2.</span> <span class="nav-text">2.貨櫃（集裝箱）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Docker-%E7%9A%84%E8%A7%92%E8%89%B2"><span class="nav-number">1.5.</span> <span class="nav-text">Docker 的角色</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B5%90%E8%AB%96"><span class="nav-number">1.6.</span> <span class="nav-text">結論</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BB%B6%E4%BC%B8%E9%96%B1%E8%AE%80"><span class="nav-number">2.</span> <span class="nav-text">延伸閱讀</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="ShouShouRen" src="https://avatars.githubusercontent.com/u/86337159?s=400&u=325f6940b3c1b446e26c490dd23abacb71a878cc&v=4">
+  <p class="site-author-name" itemprop="name">ShouShouRen</p>
+  <div class="site-description" itemprop="description">歡迎來到瘦瘦仁的前端部落！這裡是我專注於網頁相關技術的網站。我熱愛探索前端開發的無限可能，並樂於與大家分享我的學習心得與成長過程。在這個部落格中，你將找到有關 HTML、CSS、JavaScript、Vue.js、Bootstrap、Tailwind 和 Nuxt.js 等前端技術的深入文章。不論你是初學者還是有經驗的開發者，這裡都有適合你的內容。讓我們一同踏上前端之旅，共同探索這個不斷進化的領域吧！</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">標籤</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://www.facebook.com/profile.php?id=100015174813131" title="FB Page → https:&#x2F;&#x2F;www.facebook.com&#x2F;profile.php?id&#x3D;100015174813131" rel="external nofollow noopener noreferrer" target="_blank"><i class="fab fa-facebook fa-fw"></i>FB Page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://instagram.com/wei_chen.1022" title="Instagram → https:&#x2F;&#x2F;instagram.com&#x2F;wei_chen.1022" rel="external nofollow noopener noreferrer" target="_blank"><i class="fab fa-instagram fa-fw"></i>Instagram</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder"><a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/ShouShouRen">ShouShouRen</a></span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="external nofollow noopener noreferrer" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="external nofollow noopener noreferrer" target="_blank">NexT.Pisces</a> 強力驅動
+<a target="_blank" href="https://hexo.io" class="theme-link" rel="external nofollow noopener noreferrer"> Hexo </a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"shouren-blog.lanya.dev","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-959LSCY0GX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-959LSCY0GX');
+</script>
+  <meta name="description" content="本篇重點在上一篇教學中，我們介紹了 TypeScript 中的 Generics（泛型）、Type Guarding（型別守衛） 以及 ES6 Modules（模組系統），，接下來本我們繼續進一步探討 TypeScript 中的 Decorators（裝飾器）、Namespaces（命名空間） 以及 Utility Types（實用型別）。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="TypeScript 從 0 開始 Ep-5">
+<meta property="og:url" content="https://shouren-blog.lanya.dev/2025/02/19/TypeScript-Ep-5/">
+<meta property="og:site_name" content="瘦瘦仁的前端部落">
+<meta property="og:description" content="本篇重點在上一篇教學中，我們介紹了 TypeScript 中的 Generics（泛型）、Type Guarding（型別守衛） 以及 ES6 Modules（模組系統），，接下來本我們繼續進一步探討 TypeScript 中的 Decorators（裝飾器）、Namespaces（命名空間） 以及 Utility Types（實用型別）。">
+<meta property="og:locale" content="zh_TW">
+<meta property="article:published_time" content="2025-02-19T03:34:49.000Z">
+<meta property="article:modified_time" content="2025-02-19T14:00:49.020Z">
+<meta property="article:author" content="ShouShouRen">
+<meta property="article:tag" content="TypeScript">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://shouren-blog.lanya.dev/2025/02/19/TypeScript-Ep-5/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-TW'
+  };
+</script>
+
+  <title>TypeScript 從 0 開始 Ep-5 | 瘦瘦仁的前端部落</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-959LSCY0GX"></script>
+    <script>
+      if (CONFIG.hostname === location.hostname) {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-959LSCY0GX');
+      }
+    </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">瘦瘦仁的前端部落</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">技術分享與成長的天地</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/2023/07/29/Welcome/#more" rel="section"><i class="fa fa-user fa-fw"></i>關於</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>標籤<span class="badge">5</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類<span class="badge">4</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔<span class="badge">17</span></a>
+
+  </li>
+        <li class="menu-item menu-item-github">
+
+    <a href="https://github.com/ShouShouRen" rel="external nofollow noopener noreferrer" target="_blank"><i class="fab fa-github fa-fw"></i>github</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://shouren-blog.lanya.dev/2025/02/19/TypeScript-Ep-5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/86337159?s=400&u=325f6940b3c1b446e26c490dd23abacb71a878cc&v=4">
+      <meta itemprop="name" content="ShouShouRen">
+      <meta itemprop="description" content="歡迎來到瘦瘦仁的前端部落！這裡是我專注於網頁相關技術的網站。我熱愛探索前端開發的無限可能，並樂於與大家分享我的學習心得與成長過程。在這個部落格中，你將找到有關 HTML、CSS、JavaScript、Vue.js、Bootstrap、Tailwind 和 Nuxt.js 等前端技術的深入文章。不論你是初學者還是有經驗的開發者，這裡都有適合你的內容。讓我們一同踏上前端之旅，共同探索這個不斷進化的領域吧！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="瘦瘦仁的前端部落">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          TypeScript 從 0 開始 Ep-5
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+              
+
+              <time title="創建時間：2025-02-19 11:34:49 / 修改時間：22:00:49" itemprop="dateCreated datePublished" datetime="2025-02-19T11:34:49+08:00">2025-02-19</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/TypeScript/" itemprop="url" rel="index"><span itemprop="name">TypeScript</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="本篇重點"><a href="#本篇重點" class="headerlink" title="本篇重點"></a>本篇重點</h1><p>在上一篇教學中，我們介紹了 TypeScript 中的 Generics（泛型）、Type Guarding（型別守衛） 以及 ES6 Modules（模組系統），，接下來本我們繼續進一步探討 TypeScript 中的 <strong>Decorators（裝飾器）</strong>、<strong>Namespaces（命名空間）</strong> 以及 <strong>Utility Types（實用型別）</strong>。</p>
+<span id="more"></span>
+
+<hr>
+<h2 id="Decorators（裝飾器）"><a href="#Decorators（裝飾器）" class="headerlink" title="Decorators（裝飾器）"></a>Decorators（裝飾器）</h2><p>裝飾器是 TypeScript 中的一種特殊語法，它允許我們在不修改原始程式碼的情況下，為類別、方法、屬性或參數添加額外的功能。</p>
+<h3 id="1-類別裝飾器"><a href="#1-類別裝飾器" class="headerlink" title="1. 類別裝飾器"></a>1. 類別裝飾器</h3><p>類別裝飾器用於修改或擴展類別的行為，它是一個函式，接受類別的建構函式作為參數。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">logClass</span>(<span class="params">target: <span class="built_in">Function</span></span>) &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`Class <span class="subst">$&#123;target.name&#125;</span> is created.`</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@logClass</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MyClass</span> &#123;</span><br><span class="line">  <span class="title function_">constructor</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;MyClass instance created.&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> instance = <span class="keyword">new</span> <span class="title class_">MyClass</span>();</span><br><span class="line"><span class="comment">// 輸出：</span></span><br><span class="line"><span class="comment">// Class MyClass is created.</span></span><br><span class="line"><span class="comment">// MyClass instance created.</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-方法裝飾器"><a href="#2-方法裝飾器" class="headerlink" title="2. 方法裝飾器"></a>2. 方法裝飾器</h3><p>方法裝飾器用於修改或擴展類別中的方法，它接受三個參數：類別的原型、方法名稱以及方法的屬性描述。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">logMethod</span>(<span class="params">target: <span class="built_in">any</span>, key: <span class="built_in">string</span>, descriptor: PropertyDescriptor</span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> originalMethod = descriptor.<span class="property">value</span>;</span><br><span class="line"></span><br><span class="line">  descriptor.<span class="property">value</span> = <span class="keyword">function</span> (<span class="params">...args: <span class="built_in">any</span>[]</span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(</span><br><span class="line">      <span class="string">`Calling method <span class="subst">$&#123;key&#125;</span> with arguments: <span class="subst">$&#123;<span class="built_in">JSON</span>.stringify(args)&#125;</span>`</span></span><br><span class="line">    );</span><br><span class="line">    <span class="keyword">const</span> result = originalMethod.<span class="title function_">apply</span>(<span class="variable language_">this</span>, args);</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`Method <span class="subst">$&#123;key&#125;</span> returned: <span class="subst">$&#123;result&#125;</span>`</span>);</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> descriptor;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Calculator</span> &#123;</span><br><span class="line">  <span class="meta">@logMethod</span></span><br><span class="line">  <span class="title function_">add</span>(<span class="attr">a</span>: <span class="built_in">number</span>, <span class="attr">b</span>: <span class="built_in">number</span>): <span class="built_in">number</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> a + b;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> calc = <span class="keyword">new</span> <span class="title class_">Calculator</span>();</span><br><span class="line">calc.<span class="title function_">add</span>(<span class="number">2</span>, <span class="number">3</span>);</span><br><span class="line"><span class="comment">// 輸出：</span></span><br><span class="line"><span class="comment">// Calling method add with arguments: [2,3]</span></span><br><span class="line"><span class="comment">// Method add returned: 5</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-屬性裝飾器"><a href="#3-屬性裝飾器" class="headerlink" title="3. 屬性裝飾器"></a>3. 屬性裝飾器</h3><p>屬性裝飾器用於修改或擴展類別中的屬性，它接受兩個參數：類別的原型以及屬性的名稱。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">logProperty</span>(<span class="params">target: <span class="built_in">any</span>, key: <span class="built_in">string</span></span>) &#123;</span><br><span class="line">  <span class="keyword">let</span> value = target[key];</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> getter = <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`Getting value of property <span class="subst">$&#123;key&#125;</span>: <span class="subst">$&#123;value&#125;</span>`</span>);</span><br><span class="line">    <span class="keyword">return</span> value;</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> setter = <span class="keyword">function</span> (<span class="params">newVal: <span class="built_in">any</span></span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`Setting value of property <span class="subst">$&#123;key&#125;</span> to: <span class="subst">$&#123;newVal&#125;</span>`</span>);</span><br><span class="line">    value = newVal;</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  <span class="title class_">Object</span>.<span class="title function_">defineProperty</span>(target, key, &#123;</span><br><span class="line">    <span class="attr">get</span>: getter,</span><br><span class="line">    <span class="attr">set</span>: setter,</span><br><span class="line">    <span class="attr">enumerable</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="attr">configurable</span>: <span class="literal">true</span>,</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">User</span> &#123;</span><br><span class="line">  <span class="meta">@logProperty</span></span><br><span class="line">  <span class="attr">name</span>: <span class="built_in">string</span>;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">constructor</span>(<span class="params">name: <span class="built_in">string</span></span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">name</span> = name;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> user = <span class="keyword">new</span> <span class="title class_">User</span>(<span class="string">&quot;Alice&quot;</span>);</span><br><span class="line">user.<span class="property">name</span> = <span class="string">&quot;Bob&quot;</span>;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(user.<span class="property">name</span>);</span><br><span class="line"><span class="comment">// 輸出：</span></span><br><span class="line"><span class="comment">// Setting value of property name to: Bob</span></span><br><span class="line"><span class="comment">// Getting value of property name: Bob</span></span><br><span class="line"><span class="comment">// Bob</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="Namespaces（命名空間）"><a href="#Namespaces（命名空間）" class="headerlink" title="Namespaces（命名空間）"></a>Namespaces（命名空間）</h2><p>命名空間是 TypeScript 中用於組織程式碼的一種方式，它可以幫助我們避免全域變數的污染，並將相關的程式碼組織在一起，命名空間類似於模組，但它們的語法和用途有所不同。</p>
+<h3 id="1-基本命名空間"><a href="#1-基本命名空間" class="headerlink" title="1. 基本命名空間"></a>1. 基本命名空間</h3><p>使用 <code>namespace</code> 關鍵字來定義一個命名空間，並使用 <code>export</code> 關鍵字來匯出命名空間中的內容。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">namespace</span> <span class="title class_">MyNamespace</span> &#123;</span><br><span class="line">  <span class="keyword">export</span> <span class="keyword">function</span> <span class="title function_">greet</span>(<span class="params">name: <span class="built_in">string</span></span>): <span class="built_in">string</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">`Hello, <span class="subst">$&#123;name&#125;</span>!`</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">export</span> <span class="keyword">const</span> <span class="variable constant_">PI</span> = <span class="number">3.14</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title class_">MyNamespace</span>.<span class="title function_">greet</span>(<span class="string">&quot;Alice&quot;</span>)); <span class="comment">// Hello, Alice!</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title class_">MyNamespace</span>.<span class="property">PI</span>); <span class="comment">// 3.14</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-嵌套命名空間"><a href="#2-嵌套命名空間" class="headerlink" title="2. 嵌套命名空間"></a>2. 嵌套命名空間</h3><p>命名空間可以嵌套使用，以進一步組織程式碼。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">namespace</span> <span class="title class_">OuterNamespace</span> &#123;</span><br><span class="line">  <span class="keyword">export</span> <span class="keyword">namespace</span> <span class="title class_">InnerNamespace</span> &#123;</span><br><span class="line">    <span class="keyword">export</span> <span class="keyword">function</span> <span class="title function_">greet</span>(<span class="params">name: <span class="built_in">string</span></span>): <span class="built_in">string</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="string">`Hello, <span class="subst">$&#123;name&#125;</span>!`</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title class_">OuterNamespace</span>.<span class="property">InnerNamespace</span>.<span class="title function_">greet</span>(<span class="string">&quot;Bob&quot;</span>)); <span class="comment">// Hello, Bob!</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-命名空間與模組的區別"><a href="#3-命名空間與模組的區別" class="headerlink" title="3. 命名空間與模組的區別"></a>3. 命名空間與模組的區別</h3><p>雖然命名空間和模組都可以用來組織程式碼，但它們的使用場景有所不同：</p>
+<ul>
+<li><strong>命名空間</strong>：適合用於小型專案或需要避免全域變數污染的場景。</li>
+<li><strong>模組</strong>：適合用於大型專案或需要與其他工具（如 Webpack、Rollup）整合的場景。</li>
+</ul>
+<hr>
+<h2 id="Utility-Types（實用型別）"><a href="#Utility-Types（實用型別）" class="headerlink" title="Utility Types（實用型別）"></a>Utility Types（實用型別）</h2><p>TypeScript 提供了一些內建的實用型別，這些型別可以幫助我們更靈活地處理型別轉換與操作。</p>
+<h3 id="1-Partial"><a href="#1-Partial" class="headerlink" title="1. Partial&lt;T&gt;"></a>1. <code>Partial&lt;T&gt;</code></h3><p><code>Partial&lt;T&gt;</code> 可以將型別 <code>T</code> 的所有屬性設為可選。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> <span class="title class_">User</span> &#123;</span><br><span class="line">  <span class="attr">name</span>: <span class="built_in">string</span>;</span><br><span class="line">  <span class="attr">age</span>: <span class="built_in">number</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> <span class="title class_">PartialUser</span> = <span class="title class_">Partial</span>&lt;<span class="title class_">User</span>&gt;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="attr">user</span>: <span class="title class_">PartialUser</span> = &#123;</span><br><span class="line">  <span class="attr">name</span>: <span class="string">&quot;Alice&quot;</span>,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-Required"><a href="#2-Required" class="headerlink" title="2. Required&lt;T&gt;"></a>2. <code>Required&lt;T&gt;</code></h3><p><code>Required&lt;T&gt;</code> 可以將型別 <code>T</code> 的所有屬性設為必填。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> <span class="title class_">User</span> &#123;</span><br><span class="line">  name?: <span class="built_in">string</span>;</span><br><span class="line">  age?: <span class="built_in">number</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> <span class="title class_">RequiredUser</span> = <span class="title class_">Required</span>&lt;<span class="title class_">User</span>&gt;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="attr">user</span>: <span class="title class_">RequiredUser</span> = &#123;</span><br><span class="line">  <span class="attr">name</span>: <span class="string">&quot;Alice&quot;</span>,</span><br><span class="line">  <span class="attr">age</span>: <span class="number">25</span>,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-Readonly"><a href="#3-Readonly" class="headerlink" title="3. Readonly&lt;T&gt;"></a>3. <code>Readonly&lt;T&gt;</code></h3><p><code>Readonly&lt;T&gt;</code> 可以將型別 <code>T</code> 的所有屬性設為唯讀。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> <span class="title class_">User</span> &#123;</span><br><span class="line">  <span class="attr">name</span>: <span class="built_in">string</span>;</span><br><span class="line">  <span class="attr">age</span>: <span class="built_in">number</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> <span class="title class_">ReadonlyUser</span> = <span class="title class_">Readonly</span>&lt;<span class="title class_">User</span>&gt;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="attr">user</span>: <span class="title class_">ReadonlyUser</span> = &#123;</span><br><span class="line">  <span class="attr">name</span>: <span class="string">&quot;Alice&quot;</span>,</span><br><span class="line">  <span class="attr">age</span>: <span class="number">25</span>,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">user.<span class="property">name</span> = <span class="string">&quot;Bob&quot;</span>; <span class="comment">// 錯誤：無法指派給唯讀屬性</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="4-Pick"><a href="#4-Pick" class="headerlink" title="4. Pick&lt;T, K&gt;"></a>4. <code>Pick&lt;T, K&gt;</code></h3><p><code>Pick&lt;T, K&gt;</code> 可以從型別 <code>T</code> 中挑選出指定的屬性 <code>K</code>。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> <span class="title class_">User</span> &#123;</span><br><span class="line">  <span class="attr">name</span>: <span class="built_in">string</span>;</span><br><span class="line">  <span class="attr">age</span>: <span class="built_in">number</span>;</span><br><span class="line">  <span class="attr">email</span>: <span class="built_in">string</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> <span class="title class_">UserNameAndAge</span> = <span class="title class_">Pick</span>&lt;<span class="title class_">User</span>, <span class="string">&quot;name&quot;</span> | <span class="string">&quot;age&quot;</span>&gt;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="attr">user</span>: <span class="title class_">UserNameAndAge</span> = &#123;</span><br><span class="line">  <span class="attr">name</span>: <span class="string">&quot;Alice&quot;</span>,</span><br><span class="line">  <span class="attr">age</span>: <span class="number">25</span>,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-Omit"><a href="#5-Omit" class="headerlink" title="5. Omit&lt;T, K&gt;"></a>5. <code>Omit&lt;T, K&gt;</code></h3><p><code>Omit&lt;T, K&gt;</code> 可以從型別 <code>T</code> 中排除指定的屬性 <code>K</code>。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> <span class="title class_">User</span> &#123;</span><br><span class="line">  <span class="attr">name</span>: <span class="built_in">string</span>;</span><br><span class="line">  <span class="attr">age</span>: <span class="built_in">number</span>;</span><br><span class="line">  <span class="attr">email</span>: <span class="built_in">string</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> <span class="title class_">UserWithoutEmail</span> = <span class="title class_">Omit</span>&lt;<span class="title class_">User</span>, <span class="string">&quot;email&quot;</span>&gt;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="attr">user</span>: <span class="title class_">UserWithoutEmail</span> = &#123;</span><br><span class="line">  <span class="attr">name</span>: <span class="string">&quot;Alice&quot;</span>,</span><br><span class="line">  <span class="attr">age</span>: <span class="number">25</span>,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="結論"><a href="#結論" class="headerlink" title="結論"></a><strong>結論</strong></h3><p>在本篇中，我們深入探討了 TypeScript 中的 <strong>Decorators（裝飾器）</strong>、<strong>Namespaces（命名空間）</strong> 以及 <strong>Utility Types（實用型別）</strong>，包括：</p>
+<ul>
+<li>裝飾器的基本用法與應用場景。</li>
+<li>命名空間的定義與使用。</li>
+<li>實用型別的介紹與範例。</li>
+</ul>
+<hr>
+<h1 id="延伸閱讀"><a href="#延伸閱讀" class="headerlink" title="延伸閱讀"></a>延伸閱讀</h1><ul>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.typescriptlang.org/docs/handbook/decorators.html">TypeScript 官方文件 - Decorators</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.typescriptlang.org/docs/handbook/namespaces.html">TypeScript 官方文件 - Namespaces</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.typescriptlang.org/docs/handbook/utility-types.html">TypeScript 官方文件 - Utility Types</a></li>
+</ul>
+<hr>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/TypeScript/" rel="tag"># TypeScript</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/02/18/TypeScript-Ep-4/" rel="prev" title="TypeScript 從 0 開始 Ep-4">
+      <i class="fa fa-chevron-left"></i> TypeScript 從 0 開始 Ep-4
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2025/02/21/Docker-%E8%88%87-K8s-%E5%AD%B8%E7%BF%92%E7%AD%86%E8%A8%98-Ep-0/" rel="next" title="Docker 與 K8s 學習筆記 Ep-0">
+      Docker 與 K8s 學習筆記 Ep-0 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+        <div>
+          <a href="https://www.buymeacoffee.com/shoublog" target="_blank" rel="external nofollow noopener noreferrer">
+            <img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=☕&slug=shoublog&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff">
+          </a>
+        </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9C%AC%E7%AF%87%E9%87%8D%E9%BB%9E"><span class="nav-number">1.</span> <span class="nav-text">本篇重點</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Decorators%EF%BC%88%E8%A3%9D%E9%A3%BE%E5%99%A8%EF%BC%89"><span class="nav-number">1.1.</span> <span class="nav-text">Decorators（裝飾器）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E9%A1%9E%E5%88%A5%E8%A3%9D%E9%A3%BE%E5%99%A8"><span class="nav-number">1.1.1.</span> <span class="nav-text">1. 類別裝飾器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%96%B9%E6%B3%95%E8%A3%9D%E9%A3%BE%E5%99%A8"><span class="nav-number">1.1.2.</span> <span class="nav-text">2. 方法裝飾器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%B1%AC%E6%80%A7%E8%A3%9D%E9%A3%BE%E5%99%A8"><span class="nav-number">1.1.3.</span> <span class="nav-text">3. 屬性裝飾器</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Namespaces%EF%BC%88%E5%91%BD%E5%90%8D%E7%A9%BA%E9%96%93%EF%BC%89"><span class="nav-number">1.2.</span> <span class="nav-text">Namespaces（命名空間）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%9F%BA%E6%9C%AC%E5%91%BD%E5%90%8D%E7%A9%BA%E9%96%93"><span class="nav-number">1.2.1.</span> <span class="nav-text">1. 基本命名空間</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%B5%8C%E5%A5%97%E5%91%BD%E5%90%8D%E7%A9%BA%E9%96%93"><span class="nav-number">1.2.2.</span> <span class="nav-text">2. 嵌套命名空間</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%91%BD%E5%90%8D%E7%A9%BA%E9%96%93%E8%88%87%E6%A8%A1%E7%B5%84%E7%9A%84%E5%8D%80%E5%88%A5"><span class="nav-number">1.2.3.</span> <span class="nav-text">3. 命名空間與模組的區別</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Utility-Types%EF%BC%88%E5%AF%A6%E7%94%A8%E5%9E%8B%E5%88%A5%EF%BC%89"><span class="nav-number">1.3.</span> <span class="nav-text">Utility Types（實用型別）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Partial"><span class="nav-number">1.3.1.</span> <span class="nav-text">1. Partial&lt;T&gt;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Required"><span class="nav-number">1.3.2.</span> <span class="nav-text">2. Required&lt;T&gt;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Readonly"><span class="nav-number">1.3.3.</span> <span class="nav-text">3. Readonly&lt;T&gt;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-Pick"><span class="nav-number">1.3.4.</span> <span class="nav-text">4. Pick&lt;T, K&gt;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-Omit"><span class="nav-number">1.3.5.</span> <span class="nav-text">5. Omit&lt;T, K&gt;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B5%90%E8%AB%96"><span class="nav-number">1.3.6.</span> <span class="nav-text">結論</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BB%B6%E4%BC%B8%E9%96%B1%E8%AE%80"><span class="nav-number">2.</span> <span class="nav-text">延伸閱讀</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="ShouShouRen" src="https://avatars.githubusercontent.com/u/86337159?s=400&u=325f6940b3c1b446e26c490dd23abacb71a878cc&v=4">
+  <p class="site-author-name" itemprop="name">ShouShouRen</p>
+  <div class="site-description" itemprop="description">歡迎來到瘦瘦仁的前端部落！這裡是我專注於網頁相關技術的網站。我熱愛探索前端開發的無限可能，並樂於與大家分享我的學習心得與成長過程。在這個部落格中，你將找到有關 HTML、CSS、JavaScript、Vue.js、Bootstrap、Tailwind 和 Nuxt.js 等前端技術的深入文章。不論你是初學者還是有經驗的開發者，這裡都有適合你的內容。讓我們一同踏上前端之旅，共同探索這個不斷進化的領域吧！</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">標籤</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://www.facebook.com/profile.php?id=100015174813131" title="FB Page → https:&#x2F;&#x2F;www.facebook.com&#x2F;profile.php?id&#x3D;100015174813131" rel="external nofollow noopener noreferrer" target="_blank"><i class="fab fa-facebook fa-fw"></i>FB Page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://instagram.com/wei_chen.1022" title="Instagram → https:&#x2F;&#x2F;instagram.com&#x2F;wei_chen.1022" rel="external nofollow noopener noreferrer" target="_blank"><i class="fab fa-instagram fa-fw"></i>Instagram</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder"><a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/ShouShouRen">ShouShouRen</a></span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="external nofollow noopener noreferrer" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="external nofollow noopener noreferrer" target="_blank">NexT.Pisces</a> 強力驅動
+<a target="_blank" href="https://hexo.io" class="theme-link" rel="external nofollow noopener noreferrer"> Hexo </a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

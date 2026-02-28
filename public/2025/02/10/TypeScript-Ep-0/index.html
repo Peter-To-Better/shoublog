@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"shouren-blog.lanya.dev","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-959LSCY0GX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-959LSCY0GX');
+</script>
+  <meta name="description" content="本篇重點在這篇文章中，我們將介紹 JavaScript 和 TypeScript 的區別，為什麼你應該學習 TypeScript，並簡單解釋 TypeScript 的運作原理。如何使用 Vite 快速啟動一個 TypeScript 專案，並分享一個官方的 TypeScript 線上編輯平台。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="TypeScript 從 0 開始 Ep-0">
+<meta property="og:url" content="https://shouren-blog.lanya.dev/2025/02/10/TypeScript-Ep-0/">
+<meta property="og:site_name" content="瘦瘦仁的前端部落">
+<meta property="og:description" content="本篇重點在這篇文章中，我們將介紹 JavaScript 和 TypeScript 的區別，為什麼你應該學習 TypeScript，並簡單解釋 TypeScript 的運作原理。如何使用 Vite 快速啟動一個 TypeScript 專案，並分享一個官方的 TypeScript 線上編輯平台。">
+<meta property="og:locale" content="zh_TW">
+<meta property="article:published_time" content="2025-02-10T08:32:00.000Z">
+<meta property="article:modified_time" content="2025-02-15T03:45:57.167Z">
+<meta property="article:author" content="ShouShouRen">
+<meta property="article:tag" content="TypeScript">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://shouren-blog.lanya.dev/2025/02/10/TypeScript-Ep-0/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-TW'
+  };
+</script>
+
+  <title>TypeScript 從 0 開始 Ep-0 | 瘦瘦仁的前端部落</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-959LSCY0GX"></script>
+    <script>
+      if (CONFIG.hostname === location.hostname) {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-959LSCY0GX');
+      }
+    </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">瘦瘦仁的前端部落</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">技術分享與成長的天地</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/2023/07/29/Welcome/#more" rel="section"><i class="fa fa-user fa-fw"></i>關於</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>標籤<span class="badge">5</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類<span class="badge">4</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔<span class="badge">17</span></a>
+
+  </li>
+        <li class="menu-item menu-item-github">
+
+    <a href="https://github.com/ShouShouRen" rel="external nofollow noopener noreferrer" target="_blank"><i class="fab fa-github fa-fw"></i>github</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://shouren-blog.lanya.dev/2025/02/10/TypeScript-Ep-0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/86337159?s=400&u=325f6940b3c1b446e26c490dd23abacb71a878cc&v=4">
+      <meta itemprop="name" content="ShouShouRen">
+      <meta itemprop="description" content="歡迎來到瘦瘦仁的前端部落！這裡是我專注於網頁相關技術的網站。我熱愛探索前端開發的無限可能，並樂於與大家分享我的學習心得與成長過程。在這個部落格中，你將找到有關 HTML、CSS、JavaScript、Vue.js、Bootstrap、Tailwind 和 Nuxt.js 等前端技術的深入文章。不論你是初學者還是有經驗的開發者，這裡都有適合你的內容。讓我們一同踏上前端之旅，共同探索這個不斷進化的領域吧！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="瘦瘦仁的前端部落">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          TypeScript 從 0 開始 Ep-0
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2025-02-10 16:32:00" itemprop="dateCreated datePublished" datetime="2025-02-10T16:32:00+08:00">2025-02-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2025-02-15 11:45:57" itemprop="dateModified" datetime="2025-02-15T11:45:57+08:00">2025-02-15</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/TypeScript/" itemprop="url" rel="index"><span itemprop="name">TypeScript</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="本篇重點"><a href="#本篇重點" class="headerlink" title="本篇重點"></a>本篇重點</h1><p>在這篇文章中，我們將介紹 JavaScript 和 TypeScript 的區別，為什麼你應該學習 TypeScript，並簡單解釋 TypeScript 的運作原理。如何使用 Vite 快速啟動一個 TypeScript 專案，並分享一個官方的 TypeScript 線上編輯平台。</p>
+<span id="more"></span>
+
+<h2 id="JavaScript-vs-TypeScript"><a href="#JavaScript-vs-TypeScript" class="headerlink" title="JavaScript vs TypeScript"></a>JavaScript vs TypeScript</h2><p><strong>JavaScript</strong> 是一個弱型別的語言，在開發中難免會遇到一些奇怪的 JavaScript 轉型特性，而導致在開發上出現一些奇怪的錯誤。以下是一些經典的型別問題範例：</p>
+<ol>
+<li>數字與字串相加：</li>
+</ol>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="number">1</span> + <span class="string">&quot;2&quot;</span>); <span class="comment">// &quot;12&quot;</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;5&quot;</span> - <span class="number">1</span>); <span class="comment">// 4</span></span><br></pre></td></tr></table></figure>
+
+<p>解釋:</p>
+<p>1 + “2” 會被隱式轉型為字串相加，因此結果為 “12”。<br>“5” - 1 會轉型成數字，因此結果為 4。</p>
+<ol start="2">
+<li>NaN 的特性：</li>
+</ol>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title class_">NaN</span> === <span class="title class_">NaN</span>); <span class="comment">// false</span></span><br></pre></td></tr></table></figure>
+
+<p>解釋:<br>NaN 是 JavaScript 中唯一一個不等於自身的值，使用 <code>Number.isNaN()</code> 檢查比較安全。</p>
+<ol start="3">
+<li>雙等號與三等號的比較：</li>
+</ol>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="number">0</span> == <span class="string">&quot;0&quot;</span>); <span class="comment">// true</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="number">0</span> === <span class="string">&quot;0&quot;</span>); <span class="comment">// false</span></span><br></pre></td></tr></table></figure>
+
+<p>解釋:</p>
+<p><code>==</code> 會進行型別轉換，所以 <code>0 == &quot;0&quot;</code> 為 true。<br><code>===</code> 不會進行型別轉換，因此結果為 false。</p>
+<ol start="3">
+<li>typeof 過時行為：</li>
+</ol>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="keyword">typeof</span> <span class="literal">null</span>); <span class="comment">// &quot;object&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>解釋:<br>這是 JavaScript 的歷史遺留問題，應該用 <code>value === null</code> 來判斷。</p>
+<h3 id="主要差異"><a href="#主要差異" class="headerlink" title="主要差異"></a>主要差異</h3><table>
+<thead>
+<tr>
+<th><strong>比較項目</strong></th>
+<th><strong>JavaScript</strong></th>
+<th><strong>TypeScript</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>型別</td>
+<td>動態型別</td>
+<td>靜態型別</td>
+</tr>
+<tr>
+<td>學習起點</td>
+<td>不需學習型別</td>
+<td>需設定型別</td>
+</tr>
+<tr>
+<td>錯誤檢測</td>
+<td>在執行時錯誤曝露</td>
+<td>在編譯時就提示錯誤</td>
+</tr>
+<tr>
+<td>最終產出</td>
+<td>JavaScript</td>
+<td>JavaScript</td>
+</tr>
+<tr>
+<td>型別安全</td>
+<td>無型別檢查</td>
+<td>嚴格型別檢查</td>
+</tr>
+<tr>
+<td>副檔名</td>
+<td>.js 或 .jsx</td>
+<td>.ts .tsx</td>
+</tr>
+</tbody></table>
+<h2 id="為什麼要學習-TypeScript"><a href="#為什麼要學習-TypeScript" class="headerlink" title="為什麼要學習 TypeScript"></a>為什麼要學習 TypeScript</h2><ol>
+<li><p><strong>提高開發效率：</strong></p>
+<ul>
+<li>在編譯時就能發現型別相關的錯誤</li>
+<li>減少執行時的意外錯誤</li>
+<li>更容易重構和維護程式碼</li>
+</ul>
+</li>
+<li><p><strong>提供好的編輯器支援：</strong></p>
+<ul>
+<li>智能提示更準確</li>
+<li>自動完成更智能</li>
+<li>重構工具更強大</li>
+<li>跳轉到定義功能更準確</li>
+</ul>
+</li>
+<li><p><strong>便於理解程式碼：</strong></p>
+<ul>
+<li>型別註解作為程式碼的文檔</li>
+<li>更容易理解函數的輸入輸出</li>
+<li>更清晰的程式碼結構</li>
+</ul>
+</li>
+<li><p><strong>最終生成的輸出：</strong></p>
+<ul>
+<li>編譯後的 JavaScript 可在任何環境執行</li>
+<li>可以選擇編譯目標版本</li>
+<li>支援最新的 JavaScript 特性</li>
+</ul>
+</li>
+</ol>
+<h2 id="TypeScript-的運作原理"><a href="#TypeScript-的運作原理" class="headerlink" title="TypeScript 的運作原理"></a>TypeScript 的運作原理</h2><p>TypeScript 本身不能直接執行，它需要編譯成 JavaScript 才能在瀏覽器或任何 Node.js 環境中執行。過程如下：</p>
+<ol>
+<li><p><strong>編譯階段：</strong></p>
+<ul>
+<li>TypeScript 程式碼經過 TypeScript Compiler (tsc) 處理</li>
+<li>進行型別檢查</li>
+<li>移除型別相關的程式碼</li>
+</ul>
+</li>
+<li><p><strong>輸出階段：</strong></p>
+<ul>
+<li>產生純 JavaScript 程式碼</li>
+<li>可以選擇不同的 JavaScript 版本</li>
+<li>支援 Source Map 方便除錯</li>
+</ul>
+</li>
+<li><p><strong>執行階段：</strong></p>
+<ul>
+<li>在瀏覽器或 Node.js 環境中執行</li>
+<li>運作效能與原生 JavaScript 相同</li>
+</ul>
+</li>
+</ol>
+<h2 id="Vite-起-TypeScript-專案"><a href="#Vite-起-TypeScript-專案" class="headerlink" title="Vite 起 TypeScript 專案"></a>Vite 起 TypeScript 專案</h2><p>以下範例是使用 vite 創建 react 搭配 ts 指令來源可以參考 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://vite.dev/guide/">Vite 官方</a> ，不同的框架有對應的指令。</p>
+<ol>
+<li><p><strong>初始化專案</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pnpm create vite@latest my-typescript-project --template react-ts</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>進入目錄</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> my-typescript-project</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>安裝相依套件</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pnpm install</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>啟動專案</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pnpm dev</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="TypeScript-Configuration-檔案介紹與差異"><a href="#TypeScript-Configuration-檔案介紹與差異" class="headerlink" title="TypeScript Configuration 檔案介紹與差異"></a><strong>TypeScript Configuration 檔案介紹與差異</strong></h3><p>在 TypeScript 專案中，通常會有多個 <code>tsconfig</code> 檔案來針對不同環境（例如前端、後端或共用設定）進行設定。以下是 <code>tsconfig.app.json</code>、<code>tsconfig.node.json</code> 和 <code>tsconfig.json</code> 的詳細介紹與用途差異。</p>
+<hr>
+<h3 id="1-tsconfig-json-主設定檔"><a href="#1-tsconfig-json-主設定檔" class="headerlink" title="1. tsconfig.json (主設定檔)"></a><strong>1. <code>tsconfig.json</code> (主設定檔)</strong></h3><p><strong>作用</strong>:</p>
+<ul>
+<li>作為專案的根配置檔案，負責引用其他設定檔。</li>
+<li>使用 <code>references</code> 將多個子專案設定檔連結起來，適合大型專案的 Monorepo 架構。</li>
+</ul>
+<p><strong>範例與說明:</strong></p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;files&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;references&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span> <span class="attr">&quot;path&quot;</span><span class="punctuation">:</span> <span class="string">&quot;./tsconfig.app.json&quot;</span> <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span> <span class="attr">&quot;path&quot;</span><span class="punctuation">:</span> <span class="string">&quot;./tsconfig.node.json&quot;</span> <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>重點設定:</strong></p>
+<ul>
+<li><code>files</code>: 明確指定需要編譯的檔案，通常會為空，因為會交由子設定檔管理。</li>
+<li><code>references</code>: 定義專案之間的引用，使 TypeScript 可以正確處理多專案建構。</li>
+</ul>
+<p><strong>適用情境:</strong></p>
+<ul>
+<li>用來管理多個子專案設定的入口點，提升編譯效能。</li>
+</ul>
+<hr>
+<h3 id="2-tsconfig-app-json-前端設定檔"><a href="#2-tsconfig-app-json-前端設定檔" class="headerlink" title="2. tsconfig.app.json (前端設定檔)"></a><strong>2. <code>tsconfig.app.json</code> (前端設定檔)</strong></h3><p><strong>作用:</strong></p>
+<ul>
+<li>為前端專案（例如 React 或 Next.js）提供專屬的 TypeScript 編譯設定。</li>
+</ul>
+<p><strong>範例與說明:</strong></p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;compilerOptions&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;tsBuildInfoFile&quot;</span><span class="punctuation">:</span> <span class="string">&quot;./node_modules/.tmp/tsconfig.app.tsbuildinfo&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;target&quot;</span><span class="punctuation">:</span> <span class="string">&quot;ES2020&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;useDefineForClassFields&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;lib&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;ES2020&quot;</span><span class="punctuation">,</span> <span class="string">&quot;DOM&quot;</span><span class="punctuation">,</span> <span class="string">&quot;DOM.Iterable&quot;</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;module&quot;</span><span class="punctuation">:</span> <span class="string">&quot;ESNext&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;skipLibCheck&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Bundler mode */</span></span><br><span class="line">    <span class="attr">&quot;moduleResolution&quot;</span><span class="punctuation">:</span> <span class="string">&quot;bundler&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;allowImportingTsExtensions&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;isolatedModules&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;moduleDetection&quot;</span><span class="punctuation">:</span> <span class="string">&quot;force&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;noEmit&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;jsx&quot;</span><span class="punctuation">:</span> <span class="string">&quot;react-jsx&quot;</span><span class="punctuation">,</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Linting */</span></span><br><span class="line">    <span class="attr">&quot;strict&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;noUnusedLocals&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;noUnusedParameters&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;noFallthroughCasesInSwitch&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;noUncheckedSideEffectImports&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;include&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;src&quot;</span><span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>重點設定:</strong></p>
+<ul>
+<li><code>target</code>: 設定編譯後的目標 JavaScript 語法版本為 <code>ES2020</code>。</li>
+<li><code>lib</code>: 包含 <code>DOM</code> 和 <code>DOM.Iterable</code> 以支援前端瀏覽器環境。</li>
+<li><code>jsx</code>: 設定為 <code>react-jsx</code>，以支援 React 相關語法。</li>
+<li><code>moduleResolution</code>: 使用 <code>bundler</code> 模式，適合 Vite 等現代打包工具。</li>
+<li><code>noEmit</code>: 禁止輸出編譯檔案，通常搭配 Bundler 使用。</li>
+</ul>
+<p><strong>適用情境:</strong></p>
+<ul>
+<li>前端專案使用的 TypeScript 設定檔，針對瀏覽器環境與 React 特性進行調整。</li>
+</ul>
+<hr>
+<h3 id="3-tsconfig-node-json-後端設定檔"><a href="#3-tsconfig-node-json-後端設定檔" class="headerlink" title="3. tsconfig.node.json (後端設定檔)"></a><strong>3. <code>tsconfig.node.json</code> (後端設定檔)</strong></h3><p><strong>作用:</strong></p>
+<ul>
+<li>為 Node.js 環境設計的 TypeScript 編譯設定。</li>
+</ul>
+<p><strong>範例與說明:</strong></p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;compilerOptions&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;tsBuildInfoFile&quot;</span><span class="punctuation">:</span> <span class="string">&quot;./node_modules/.tmp/tsconfig.node.tsbuildinfo&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;target&quot;</span><span class="punctuation">:</span> <span class="string">&quot;ES2022&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;lib&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;ES2023&quot;</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;module&quot;</span><span class="punctuation">:</span> <span class="string">&quot;ESNext&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;skipLibCheck&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Bundler mode */</span></span><br><span class="line">    <span class="attr">&quot;moduleResolution&quot;</span><span class="punctuation">:</span> <span class="string">&quot;bundler&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;allowImportingTsExtensions&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;isolatedModules&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;moduleDetection&quot;</span><span class="punctuation">:</span> <span class="string">&quot;force&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;noEmit&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Linting */</span></span><br><span class="line">    <span class="attr">&quot;strict&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;noUnusedLocals&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;noUnusedParameters&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;noFallthroughCasesInSwitch&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;noUncheckedSideEffectImports&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;include&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;vite.config.ts&quot;</span><span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>重點設定:</strong></p>
+<ul>
+<li><code>target</code>: 設定為 <code>ES2022</code>，支援 Node.js 的最新特性。</li>
+<li><code>lib</code>: 僅保留 <code>ES2023</code>，不需要前端環境的 DOM 相關型別。</li>
+<li><code>module</code>: 設定為 <code>ESNext</code> 以支援現代模組語法。</li>
+<li><code>moduleResolution</code>: 使用 <code>bundler</code> 模式，以相容現代 Node.js 打包工具。</li>
+<li><code>noEmit</code>: 不輸出編譯結果，專注於型別檢查。</li>
+<li><code>include</code>: 只包含後端設定檔 <code>vite.config.ts</code>。</li>
+</ul>
+<p><strong>適用情境:</strong></p>
+<ul>
+<li>Node.js 專案使用的 TypeScript 設定檔，針對後端環境進行最佳化。</li>
+</ul>
+<hr>
+<h3 id="三者的主要差異與作用比較"><a href="#三者的主要差異與作用比較" class="headerlink" title="三者的主要差異與作用比較"></a><strong>三者的主要差異與作用比較</strong></h3><table>
+<thead>
+<tr>
+<th><strong>檔案名稱</strong></th>
+<th><strong>作用</strong></th>
+<th><strong>環境</strong></th>
+<th><strong>主要設定重點</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>tsconfig.json</code></td>
+<td>主設定檔，引用其他子設定檔</td>
+<td>共用</td>
+<td><code>references</code></td>
+</tr>
+<tr>
+<td><code>tsconfig.app.json</code></td>
+<td>前端設定檔，適用於 React 等前端專案</td>
+<td>瀏覽器</td>
+<td><code>jsx</code>, <code>lib: DOM</code></td>
+</tr>
+<tr>
+<td><code>tsconfig.node.json</code></td>
+<td>後端設定檔，適用於 Node.js 專案</td>
+<td>Node.js</td>
+<td><code>lib: ES2023</code></td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="結論"><a href="#結論" class="headerlink" title="結論"></a><strong>結論</strong></h3><p>透過拆分多個 <code>tsconfig</code> 檔案，可以針對不同環境進行專屬設定，避免設定衝突並提升開發效率。這種架構特別適合大型專案和 Monorepo 結構，讓專案更具可維護性與彈性。</p>
+<h2 id="推薦的線上編輯器"><a href="#推薦的線上編輯器" class="headerlink" title="推薦的線上編輯器"></a>推薦的線上編輯器</h2><p>想要在網路上不設置環境就開始寫 TypeScript，可以使用以下線上編輯器：</p>
+<ol>
+<li><p><a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.typescriptlang.org/play">TypeScript Playground</a></p>
+<ul>
+<li>官方線上編輯器</li>
+<li>支援即時編譯與錯誤提示</li>
+<li>可以選擇不同的 TypeScript 版本</li>
+<li>支援分享程式碼</li>
+</ul>
+</li>
+<li><p><a target="_blank" rel="external nofollow noopener noreferrer" href="https://stackblitz.com/">StackBlitz</a></p>
+<ul>
+<li>提供完整的開發環境</li>
+<li>支援多種框架模板</li>
+<li>可以直接部署專案</li>
+</ul>
+</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/TypeScript/" rel="tag"># TypeScript</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/02/10/TypeScript-Ep-1/" rel="prev" title="TypeScript 從 0 開始 Ep-1">
+      <i class="fa fa-chevron-left"></i> TypeScript 從 0 開始 Ep-1
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2025/02/16/TypeScript-Ep-2/" rel="next" title="TypeScript 從 0 開始 Ep-2">
+      TypeScript 從 0 開始 Ep-2 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+        <div>
+          <a href="https://www.buymeacoffee.com/shoublog" target="_blank" rel="external nofollow noopener noreferrer">
+            <img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=☕&slug=shoublog&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff">
+          </a>
+        </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9C%AC%E7%AF%87%E9%87%8D%E9%BB%9E"><span class="nav-number">1.</span> <span class="nav-text">本篇重點</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#JavaScript-vs-TypeScript"><span class="nav-number">1.1.</span> <span class="nav-text">JavaScript vs TypeScript</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E8%A6%81%E5%B7%AE%E7%95%B0"><span class="nav-number">1.1.1.</span> <span class="nav-text">主要差異</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%82%BA%E4%BB%80%E9%BA%BC%E8%A6%81%E5%AD%B8%E7%BF%92-TypeScript"><span class="nav-number">1.2.</span> <span class="nav-text">為什麼要學習 TypeScript</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TypeScript-%E7%9A%84%E9%81%8B%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="nav-number">1.3.</span> <span class="nav-text">TypeScript 的運作原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Vite-%E8%B5%B7-TypeScript-%E5%B0%88%E6%A1%88"><span class="nav-number">1.4.</span> <span class="nav-text">Vite 起 TypeScript 專案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#TypeScript-Configuration-%E6%AA%94%E6%A1%88%E4%BB%8B%E7%B4%B9%E8%88%87%E5%B7%AE%E7%95%B0"><span class="nav-number">1.4.1.</span> <span class="nav-text">TypeScript Configuration 檔案介紹與差異</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-tsconfig-json-%E4%B8%BB%E8%A8%AD%E5%AE%9A%E6%AA%94"><span class="nav-number">1.4.2.</span> <span class="nav-text">1. tsconfig.json (主設定檔)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-tsconfig-app-json-%E5%89%8D%E7%AB%AF%E8%A8%AD%E5%AE%9A%E6%AA%94"><span class="nav-number">1.4.3.</span> <span class="nav-text">2. tsconfig.app.json (前端設定檔)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-tsconfig-node-json-%E5%BE%8C%E7%AB%AF%E8%A8%AD%E5%AE%9A%E6%AA%94"><span class="nav-number">1.4.4.</span> <span class="nav-text">3. tsconfig.node.json (後端設定檔)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E8%80%85%E7%9A%84%E4%B8%BB%E8%A6%81%E5%B7%AE%E7%95%B0%E8%88%87%E4%BD%9C%E7%94%A8%E6%AF%94%E8%BC%83"><span class="nav-number">1.4.5.</span> <span class="nav-text">三者的主要差異與作用比較</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B5%90%E8%AB%96"><span class="nav-number">1.4.6.</span> <span class="nav-text">結論</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%A8%E8%96%A6%E7%9A%84%E7%B7%9A%E4%B8%8A%E7%B7%A8%E8%BC%AF%E5%99%A8"><span class="nav-number">1.5.</span> <span class="nav-text">推薦的線上編輯器</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="ShouShouRen" src="https://avatars.githubusercontent.com/u/86337159?s=400&u=325f6940b3c1b446e26c490dd23abacb71a878cc&v=4">
+  <p class="site-author-name" itemprop="name">ShouShouRen</p>
+  <div class="site-description" itemprop="description">歡迎來到瘦瘦仁的前端部落！這裡是我專注於網頁相關技術的網站。我熱愛探索前端開發的無限可能，並樂於與大家分享我的學習心得與成長過程。在這個部落格中，你將找到有關 HTML、CSS、JavaScript、Vue.js、Bootstrap、Tailwind 和 Nuxt.js 等前端技術的深入文章。不論你是初學者還是有經驗的開發者，這裡都有適合你的內容。讓我們一同踏上前端之旅，共同探索這個不斷進化的領域吧！</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">標籤</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://www.facebook.com/profile.php?id=100015174813131" title="FB Page → https:&#x2F;&#x2F;www.facebook.com&#x2F;profile.php?id&#x3D;100015174813131" rel="external nofollow noopener noreferrer" target="_blank"><i class="fab fa-facebook fa-fw"></i>FB Page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://instagram.com/wei_chen.1022" title="Instagram → https:&#x2F;&#x2F;instagram.com&#x2F;wei_chen.1022" rel="external nofollow noopener noreferrer" target="_blank"><i class="fab fa-instagram fa-fw"></i>Instagram</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder"><a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/ShouShouRen">ShouShouRen</a></span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="external nofollow noopener noreferrer" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="external nofollow noopener noreferrer" target="_blank">NexT.Pisces</a> 強力驅動
+<a target="_blank" href="https://hexo.io" class="theme-link" rel="external nofollow noopener noreferrer"> Hexo </a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

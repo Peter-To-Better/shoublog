@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"shouren-blog.lanya.dev","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-959LSCY0GX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-959LSCY0GX');
+</script>
+  <meta name="description" content="本篇重點在上一篇教學中，我們介紹了 TypeScript 中的函式、介面與型別別名，這些功能幫助我們更好的組織程式碼並提升型別安全性，接下來本我們繼續進一步探討 TypeScript 中的 Enums（列舉） 和 Tuples（元組），它們能夠幫助你更精確地定義資料結構與型別。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="TypeScript 從 0 開始 Ep-3">
+<meta property="og:url" content="https://shouren-blog.lanya.dev/2025/02/17/TypeScript-Ep-3/">
+<meta property="og:site_name" content="瘦瘦仁的前端部落">
+<meta property="og:description" content="本篇重點在上一篇教學中，我們介紹了 TypeScript 中的函式、介面與型別別名，這些功能幫助我們更好的組織程式碼並提升型別安全性，接下來本我們繼續進一步探討 TypeScript 中的 Enums（列舉） 和 Tuples（元組），它們能夠幫助你更精確地定義資料結構與型別。">
+<meta property="og:locale" content="zh_TW">
+<meta property="article:published_time" content="2025-02-17T03:25:25.000Z">
+<meta property="article:modified_time" content="2025-02-18T01:52:03.378Z">
+<meta property="article:author" content="ShouShouRen">
+<meta property="article:tag" content="TypeScript">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://shouren-blog.lanya.dev/2025/02/17/TypeScript-Ep-3/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-TW'
+  };
+</script>
+
+  <title>TypeScript 從 0 開始 Ep-3 | 瘦瘦仁的前端部落</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-959LSCY0GX"></script>
+    <script>
+      if (CONFIG.hostname === location.hostname) {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-959LSCY0GX');
+      }
+    </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">瘦瘦仁的前端部落</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">技術分享與成長的天地</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/2023/07/29/Welcome/#more" rel="section"><i class="fa fa-user fa-fw"></i>關於</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>標籤<span class="badge">5</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類<span class="badge">4</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔<span class="badge">17</span></a>
+
+  </li>
+        <li class="menu-item menu-item-github">
+
+    <a href="https://github.com/ShouShouRen" rel="external nofollow noopener noreferrer" target="_blank"><i class="fab fa-github fa-fw"></i>github</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://shouren-blog.lanya.dev/2025/02/17/TypeScript-Ep-3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/86337159?s=400&u=325f6940b3c1b446e26c490dd23abacb71a878cc&v=4">
+      <meta itemprop="name" content="ShouShouRen">
+      <meta itemprop="description" content="歡迎來到瘦瘦仁的前端部落！這裡是我專注於網頁相關技術的網站。我熱愛探索前端開發的無限可能，並樂於與大家分享我的學習心得與成長過程。在這個部落格中，你將找到有關 HTML、CSS、JavaScript、Vue.js、Bootstrap、Tailwind 和 Nuxt.js 等前端技術的深入文章。不論你是初學者還是有經驗的開發者，這裡都有適合你的內容。讓我們一同踏上前端之旅，共同探索這個不斷進化的領域吧！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="瘦瘦仁的前端部落">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          TypeScript 從 0 開始 Ep-3
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2025-02-17 11:25:25" itemprop="dateCreated datePublished" datetime="2025-02-17T11:25:25+08:00">2025-02-17</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2025-02-18 09:52:03" itemprop="dateModified" datetime="2025-02-18T09:52:03+08:00">2025-02-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/TypeScript/" itemprop="url" rel="index"><span itemprop="name">TypeScript</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="本篇重點"><a href="#本篇重點" class="headerlink" title="本篇重點"></a>本篇重點</h1><p>在上一篇教學中，我們介紹了 TypeScript 中的函式、介面與型別別名，這些功能幫助我們更好的組織程式碼並提升型別安全性，接下來本我們繼續進一步探討 TypeScript 中的 <strong>Enums（列舉）</strong> 和 <strong>Tuples（元組）</strong>，它們能夠幫助你更精確地定義資料結構與型別。</p>
+<span id="more"></span>
+
+<hr>
+<h2 id="Enums（列舉）"><a href="#Enums（列舉）" class="headerlink" title="Enums（列舉）"></a>Enums（列舉）</h2><p>Enums 是 TypeScript 提供的一種特殊型別，用來定義一組具名的常數，Enums 可以讓程式碼更具可讀性。</p>
+<h3 id="1-基本-Enums"><a href="#1-基本-Enums" class="headerlink" title="1. 基本 Enums"></a>1. 基本 Enums</h3><p>最簡單的 Enums 就是數字列舉（Numeric Enums），它會自動為每個成員分配一個從 0 開始的數字值。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> <span class="title class_">Direction</span> &#123;</span><br><span class="line">  <span class="title class_">North</span>, <span class="comment">// 0</span></span><br><span class="line">  <span class="title class_">East</span>, <span class="comment">// 1</span></span><br><span class="line">  <span class="title class_">South</span>, <span class="comment">// 2</span></span><br><span class="line">  <span class="title class_">West</span>, <span class="comment">// 3</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="attr">currentDirection</span>: <span class="title class_">Direction</span> = <span class="title class_">Direction</span>.<span class="property">North</span>;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(currentDirection); <span class="comment">// 0</span></span><br></pre></td></tr></table></figure>
+
+<p>你也可以手動指定列舉成員的值：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> <span class="title class_">Direction</span> &#123;</span><br><span class="line">  <span class="title class_">North</span> = <span class="number">1</span>,</span><br><span class="line">  <span class="title class_">East</span> = <span class="number">2</span>,</span><br><span class="line">  <span class="title class_">South</span> = <span class="number">3</span>,</span><br><span class="line">  <span class="title class_">West</span> = <span class="number">4</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="attr">currentDirection</span>: <span class="title class_">Direction</span> = <span class="title class_">Direction</span>.<span class="property">North</span>;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(currentDirection); <span class="comment">// 1</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-字串列舉（String-Enums）"><a href="#2-字串列舉（String-Enums）" class="headerlink" title="2. 字串列舉（String Enums）"></a>2. 字串列舉（String Enums）</h3><p>除了數字列舉，也能夠使用字串列舉來給，每個成員指定一個字串值。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> <span class="title class_">Direction</span> &#123;</span><br><span class="line">  <span class="title class_">North</span> = <span class="string">&quot;NORTH&quot;</span>,</span><br><span class="line">  <span class="title class_">East</span> = <span class="string">&quot;EAST&quot;</span>,</span><br><span class="line">  <span class="title class_">South</span> = <span class="string">&quot;SOUTH&quot;</span>,</span><br><span class="line">  <span class="title class_">West</span> = <span class="string">&quot;WEST&quot;</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="attr">currentDirection</span>: <span class="title class_">Direction</span> = <span class="title class_">Direction</span>.<span class="property">North</span>;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(currentDirection); <span class="comment">// &quot;NORTH&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-混合列舉（Heterogeneous-Enums）"><a href="#3-混合列舉（Heterogeneous-Enums）" class="headerlink" title="3. 混合列舉（Heterogeneous Enums）"></a>3. 混合列舉（Heterogeneous Enums）</h3><p>TypeScript 也支援混合列舉，即列舉成員可以同時包含數字和字串值，但這種用法並不常見，通常建議保持列舉成員的一致性。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> <span class="title class_">MixedEnum</span> &#123;</span><br><span class="line">  <span class="title class_">Num</span> = <span class="number">1</span>,</span><br><span class="line">  <span class="title class_">Str</span> = <span class="string">&quot;TWO&quot;</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title class_">MixedEnum</span>.<span class="property">Num</span>); <span class="comment">// 1</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title class_">MixedEnum</span>.<span class="property">Str</span>); <span class="comment">// &quot;TWO&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="4-常數列舉（Const-Enums）"><a href="#4-常數列舉（Const-Enums）" class="headerlink" title="4. 常數列舉（Const Enums）"></a>4. 常數列舉（Const Enums）</h3><p>常數列舉是一種特殊的列舉，它會在編譯時被完全移除，並且在執行時不會產生任何額外的程式碼，只需要在 <code>enum</code> 前加上關鍵字 <code>const</code> 這可以減少程式碼的體積，但會失去一些列舉的動態特性。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">enum</span> <span class="title class_">Direction</span> &#123;</span><br><span class="line">  <span class="title class_">North</span> = <span class="number">1</span>,</span><br><span class="line">  <span class="title class_">East</span> = <span class="number">2</span>,</span><br><span class="line">  <span class="title class_">South</span> = <span class="number">3</span>,</span><br><span class="line">  <span class="title class_">West</span> = <span class="number">4</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="attr">currentDirection</span>: <span class="title class_">Direction</span> = <span class="title class_">Direction</span>.<span class="property">North</span>;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(currentDirection); <span class="comment">// 1</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="5-Enums-的應用場景"><a href="#5-Enums-的應用場景" class="headerlink" title="5. Enums 的應用場景"></a>5. Enums 的應用場景</h3><p>Enums 適合用來定義一組固定的值，例如：</p>
+<ul>
+<li>方向（上、下、左、右）</li>
+<li>狀態（進行中、已完成、已取消）</li>
+<li>角色（管理員、編輯者、訪客）</li>
+</ul>
+<hr>
+<h2 id="Tuples（元組）"><a href="#Tuples（元組）" class="headerlink" title="Tuples（元組）"></a>Tuples（元組）</h2><p>Tuples 是 TypeScript 中的另一種特殊型別，它允許你定義一個固定長度的陣列，並且每個元素的型別可以不同，適合用來處理需要嚴格型別檢查的資料結構。</p>
+<h3 id="1-基本-Tuples"><a href="#1-基本-Tuples" class="headerlink" title="1. 基本 Tuples"></a>1. 基本 Tuples</h3><p>Tuples 的宣告方式與陣列類似，但需要明確指定每個元素的型別。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="attr">user</span>: [<span class="built_in">string</span>, <span class="built_in">number</span>, <span class="built_in">boolean</span>] = [<span class="string">&quot;John&quot;</span>, <span class="number">25</span>, <span class="literal">true</span>];</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(user[<span class="number">0</span>]); <span class="comment">// &quot;John&quot;</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(user[<span class="number">1</span>]); <span class="comment">// 25</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(user[<span class="number">2</span>]); <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-可選元素"><a href="#2-可選元素" class="headerlink" title="2. 可選元素"></a>2. 可選元素</h3><p>從 TypeScript 3.0 開始，Tuples 支援可選元素。你可以使用 <code>?</code> 來標記某個元素是可選的。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="attr">user</span>: [<span class="built_in">string</span>, <span class="built_in">number</span>?, <span class="built_in">boolean</span>?] = [<span class="string">&quot;John&quot;</span>];</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(user[<span class="number">0</span>]); <span class="comment">// &quot;John&quot;</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(user[<span class="number">1</span>]); <span class="comment">// undefined</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(user[<span class="number">2</span>]); <span class="comment">// undefined</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-剩餘元素（Rest-Elements）"><a href="#3-剩餘元素（Rest-Elements）" class="headerlink" title="3. 剩餘元素（Rest Elements）"></a>3. 剩餘元素（Rest Elements）</h3><p>也支援剩餘元素，你可以將多個元素打包成一個陣列。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="attr">user</span>: [<span class="built_in">string</span>, ...<span class="built_in">number</span>[]] = [<span class="string">&quot;John&quot;</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>];</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(user[<span class="number">0</span>]); <span class="comment">// &quot;John&quot;</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(user[<span class="number">1</span>]); <span class="comment">// 1</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(user[<span class="number">2</span>]); <span class="comment">// 2</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="4-Tuples-的應用場景"><a href="#4-Tuples-的應用場景" class="headerlink" title="4. Tuples 的應用場景"></a>4. Tuples 的應用場景</h3><p>Tuples 非常適合用來處理以下情境：</p>
+<ul>
+<li>函式回傳多個值</li>
+<li>定義固定長度的資料結構（例如座標、RGB 顏色值）</li>
+<li>處理需要嚴格型別檢查的資料</li>
+</ul>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">getCoordinates</span>(<span class="params"></span>): [<span class="built_in">number</span>, <span class="built_in">number</span>] &#123;</span><br><span class="line">  <span class="keyword">return</span> [<span class="number">10</span>, <span class="number">20</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> [x, y] = <span class="title function_">getCoordinates</span>();</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(x, y); <span class="comment">// 10, 20</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="Enums-與-Tuples-的比較"><a href="#Enums-與-Tuples-的比較" class="headerlink" title="Enums 與 Tuples 的比較"></a>Enums 與 Tuples 的比較</h2><table>
+<thead>
+<tr>
+<th>特性</th>
+<th>Enums</th>
+<th>Tuples</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>定義方式</td>
+<td>使用 <code>enum</code> 關鍵字</td>
+<td>使用 <code>[type1, type2, ...]</code> 語法</td>
+</tr>
+<tr>
+<td>主要用途</td>
+<td>定義一組具名的常數</td>
+<td>定義固定長度的陣列，每個元素型別可以不同</td>
+</tr>
+<tr>
+<td>型別檢查</td>
+<td>嚴格檢查列舉成員的值</td>
+<td>嚴格檢查每個元素的型別與順序</td>
+</tr>
+<tr>
+<td>應用場景</td>
+<td>方向、狀態、角色等固定值</td>
+<td>函式回傳多個值、座標、RGB 顏色值等</td>
+</tr>
+<tr>
+<td>可選元素</td>
+<td>不支援</td>
+<td>支援（從 TypeScript 3.0 開始）</td>
+</tr>
+<tr>
+<td>剩餘元素</td>
+<td>不支援</td>
+<td>支援</td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="結論"><a href="#結論" class="headerlink" title="結論"></a><strong>結論</strong></h3><p>在本篇中，我們深入探討了 TypeScript 中的 Enums 與 Tuples，包括：</p>
+<ul>
+<li>Enums 的基本使用、字串列舉、混合列舉與常數列舉</li>
+<li>Tuples 的基本使用、可選元素與剩餘元素</li>
+<li>Enums 與 Tuples 的應用場景與比較</li>
+</ul>
+<p>這些功能能夠幫助你更精確的定義資料結構與型別，並提升程式碼的可讀性與安全性。</p>
+<hr>
+<h1 id="延伸閱讀"><a href="#延伸閱讀" class="headerlink" title="延伸閱讀"></a>延伸閱讀</h1><ul>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.typescriptlang.org/docs/handbook/enums.html">TypeScript 官方文件 - Enums</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types">TypeScript 官方文件 - Tuples</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.typescriptlang.org/docs/handbook/advanced-types.html">TypeScript 中的 Enums 與 Tuples 應用實例</a></li>
+</ul>
+<hr>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/TypeScript/" rel="tag"># TypeScript</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/02/16/TypeScript-Ep-2/" rel="prev" title="TypeScript 從 0 開始 Ep-2">
+      <i class="fa fa-chevron-left"></i> TypeScript 從 0 開始 Ep-2
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2025/02/18/TypeScript-Ep-4/" rel="next" title="TypeScript 從 0 開始 Ep-4">
+      TypeScript 從 0 開始 Ep-4 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+        <div>
+          <a href="https://www.buymeacoffee.com/shoublog" target="_blank" rel="external nofollow noopener noreferrer">
+            <img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=☕&slug=shoublog&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff">
+          </a>
+        </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9C%AC%E7%AF%87%E9%87%8D%E9%BB%9E"><span class="nav-number">1.</span> <span class="nav-text">本篇重點</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Enums%EF%BC%88%E5%88%97%E8%88%89%EF%BC%89"><span class="nav-number">1.1.</span> <span class="nav-text">Enums（列舉）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%9F%BA%E6%9C%AC-Enums"><span class="nav-number">1.1.1.</span> <span class="nav-text">1. 基本 Enums</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%AD%97%E4%B8%B2%E5%88%97%E8%88%89%EF%BC%88String-Enums%EF%BC%89"><span class="nav-number">1.1.2.</span> <span class="nav-text">2. 字串列舉（String Enums）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E6%B7%B7%E5%90%88%E5%88%97%E8%88%89%EF%BC%88Heterogeneous-Enums%EF%BC%89"><span class="nav-number">1.1.3.</span> <span class="nav-text">3. 混合列舉（Heterogeneous Enums）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E5%B8%B8%E6%95%B8%E5%88%97%E8%88%89%EF%BC%88Const-Enums%EF%BC%89"><span class="nav-number">1.1.4.</span> <span class="nav-text">4. 常數列舉（Const Enums）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-Enums-%E7%9A%84%E6%87%89%E7%94%A8%E5%A0%B4%E6%99%AF"><span class="nav-number">1.1.5.</span> <span class="nav-text">5. Enums 的應用場景</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Tuples%EF%BC%88%E5%85%83%E7%B5%84%EF%BC%89"><span class="nav-number">1.2.</span> <span class="nav-text">Tuples（元組）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%9F%BA%E6%9C%AC-Tuples"><span class="nav-number">1.2.1.</span> <span class="nav-text">1. 基本 Tuples</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%8F%AF%E9%81%B8%E5%85%83%E7%B4%A0"><span class="nav-number">1.2.2.</span> <span class="nav-text">2. 可選元素</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%89%A9%E9%A4%98%E5%85%83%E7%B4%A0%EF%BC%88Rest-Elements%EF%BC%89"><span class="nav-number">1.2.3.</span> <span class="nav-text">3. 剩餘元素（Rest Elements）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-Tuples-%E7%9A%84%E6%87%89%E7%94%A8%E5%A0%B4%E6%99%AF"><span class="nav-number">1.2.4.</span> <span class="nav-text">4. Tuples 的應用場景</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Enums-%E8%88%87-Tuples-%E7%9A%84%E6%AF%94%E8%BC%83"><span class="nav-number">1.3.</span> <span class="nav-text">Enums 與 Tuples 的比較</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B5%90%E8%AB%96"><span class="nav-number">1.3.1.</span> <span class="nav-text">結論</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BB%B6%E4%BC%B8%E9%96%B1%E8%AE%80"><span class="nav-number">2.</span> <span class="nav-text">延伸閱讀</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="ShouShouRen" src="https://avatars.githubusercontent.com/u/86337159?s=400&u=325f6940b3c1b446e26c490dd23abacb71a878cc&v=4">
+  <p class="site-author-name" itemprop="name">ShouShouRen</p>
+  <div class="site-description" itemprop="description">歡迎來到瘦瘦仁的前端部落！這裡是我專注於網頁相關技術的網站。我熱愛探索前端開發的無限可能，並樂於與大家分享我的學習心得與成長過程。在這個部落格中，你將找到有關 HTML、CSS、JavaScript、Vue.js、Bootstrap、Tailwind 和 Nuxt.js 等前端技術的深入文章。不論你是初學者還是有經驗的開發者，這裡都有適合你的內容。讓我們一同踏上前端之旅，共同探索這個不斷進化的領域吧！</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">標籤</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://www.facebook.com/profile.php?id=100015174813131" title="FB Page → https:&#x2F;&#x2F;www.facebook.com&#x2F;profile.php?id&#x3D;100015174813131" rel="external nofollow noopener noreferrer" target="_blank"><i class="fab fa-facebook fa-fw"></i>FB Page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://instagram.com/wei_chen.1022" title="Instagram → https:&#x2F;&#x2F;instagram.com&#x2F;wei_chen.1022" rel="external nofollow noopener noreferrer" target="_blank"><i class="fab fa-instagram fa-fw"></i>Instagram</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder"><a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/ShouShouRen">ShouShouRen</a></span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="external nofollow noopener noreferrer" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="external nofollow noopener noreferrer" target="_blank">NexT.Pisces</a> 強力驅動
+<a target="_blank" href="https://hexo.io" class="theme-link" rel="external nofollow noopener noreferrer"> Hexo </a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

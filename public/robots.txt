@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Allow: /archives/
+Allow: /tags/
+Allow: /categories/
+
+Sitemap: https://shouren-blog.lanya.dev/sitemap-index.xml
