@@ -41,7 +41,7 @@ const { tag, posts } = Astro.props;
           category={post.data.category}
           tags={post.data.tags}
           description={post.data.description || getExcerpt(post.body)}
-          slug={post.slug}
+          slug={post.id.replace(/\.md$/, '')}
           body={post.body}
         />
       ))}

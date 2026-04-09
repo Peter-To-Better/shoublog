@@ -36,7 +36,7 @@ const posts = allPosts.slice(0, POSTS_PER_PAGE);
           category={post.data.category}
           tags={post.data.tags}
           description={post.data.description || getExcerpt(post.body)}
-          slug={post.slug}
+          slug={post.id.replace(/\.md$/, '')}
           body={post.body}
         />
       ))}
