@@ -1,0 +1,50 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import { getExcerpt } from '../../utils/helpers';
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const posts = await getCollection('posts');
+  const tags = [...new Set(posts.flatMap((post) => post.data.tags))];
+
+  return tags.map((tag) => ({
+    params: { tag },
+    props: {
+      tag,
+      posts: posts
+        .filter((post) => post.data.tags.includes(tag))
+        .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()),
+    },
+  }));
+};
+
+const { tag, posts } = Astro.props;
+---
+
+<BaseLayout title={`#${tag}`}>
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-10">
+    <div class="mb-10">
+      <a href="/tags" class="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">&larr; 所有標籤</a>
+      <h1 class="text-3xl font-bold text-gray-900 dark:text-white mt-2">
+        #{tag}
+        <span class="text-lg font-normal text-gray-400">({posts.length})</span>
+      </h1>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+      {posts.map((post: any) => (
+        <PostCard
+          title={post.data.title}
+          pubDate={post.data.pubDate}
+          category={post.data.category}
+          tags={post.data.tags}
+          description={post.data.description || getExcerpt(post.body)}
+          slug={post.slug}
+          body={post.body}
+        />
+      ))}
+    </div>
+  </div>
+</BaseLayout>
