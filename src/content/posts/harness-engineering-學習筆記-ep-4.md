@@ -96,20 +96,6 @@ You are a code reviewer. When invoked, analyze the code...
 
 `description` 寫得好不好，決定 Claude 會不會**主動派**這個 agent — 比 system prompt 還重要。
 
-## 誠實時間：從「通用 template」轉成「stack 專屬」
-
-寫到這邊我必須坦承一個轉折。
-
-Ep-3 一開始想做的是「**任何專案 clone 就能用**」的通用 template，AGENTS.md 寫得很乾淨，每個跟技術相關的欄位都用 `<!-- replace: ... -->` 標起來讓使用者填空。
-
-但**這違反了 Ep-1 講過的 ETH Zurich 教訓** — 通用、待填、像 AI 自動生成的 AGENTS.md 反而會讓任務成功率 **-3%**。一個讀者 clone 進來看到滿天的 `<!-- replace -->`，要嘛就是放著不管（template 失去意義），要嘛就花一小時填表（不如沒有）。
-
-**真正有用的 template 必須有立場**。所以這版砍掉填空式，把 template 重新定位成：
-
-> 一份**專為 Nx + NestJS + GraphQL + TypeORM + Next.js 設計**的 Harness 起手包。Stack 對得上的人 `git clone` 就能用；對不上的人 fork 後改成自己的 stack。
-
-這跟你要解決的問題比較像 — 與其做一個誰都用不上的通用品，不如做一個**特定 stack 真的能上手的精品**。
-
 ## 拿到 template
 
 ```bash
@@ -241,7 +227,7 @@ Nx workspace 最常見的問題是有人手動 `mkdir libs/foo` 然後忘記改 
 把這集濃縮成三句話：
 
 1. **Sub-agent 是 LLM Context Rot 目前最好的對策** — 不是讓主對話變聰明，而是不讓它變笨。
-2. **通用 template 是反模式** — 真正有用的 harness 必須有立場、有 stack、有具體規則。
+2. **有立場的 harness 比中立的 harness 有用** — Ep-1 講的「-3% 教訓」對 template 同樣成立。
 3. **每個 sub-agent 都應該有四件事**：寫權限分流、強迫對齊既有 convention、反面清單、標準化報告格式。
 
 下一篇 **Ep-5 — SDD：Spec-Driven Development × Slash Commands**，會加入「規格驅動開發」這個近期業界很紅的方法論，把 `/spec`、`/plan`、`/implement` 三個 slash command 串起整個從需求到實作的流程，並在 template 加上 `.claude/commands/` 目錄。
