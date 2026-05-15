@@ -57,11 +57,11 @@ Claude Code 內建了三個 sub-agent：
 
 Sub-agent 的解法很直接 — **派一個分身進去處理，只把結論帶回來**。
 
-| 場景             | 沒用 sub-agent                           | 有 sub-agent                              |
-| :--------------- | :--------------------------------------- | :---------------------------------------- |
-| Code review      | 主對話讀 5 個檔案 + 寫 review            | 派 `code-reviewer`，回傳「3 個問題」      |
-| 寫 DB migration  | 主對話 grep 過去 5 個 migration 找慣例   | 派 `migration-writer`，回傳 migration 路徑 |
-| 寫測試           | 主對話讀 fixture、mock 設定              | 派 `test-writer`，回傳「8 個測試已加」    |
+| 場景            | 沒用 sub-agent                         | 有 sub-agent                               |
+| :-------------- | :------------------------------------- | :----------------------------------------- |
+| Code review     | 主對話讀 5 個檔案 + 寫 review          | 派 `code-reviewer`，回傳「3 個問題」       |
+| 寫 DB migration | 主對話 grep 過去 5 個 migration 找慣例 | 派 `migration-writer`，回傳 migration 路徑 |
+| 寫測試          | 主對話讀 fixture、mock 設定            | 派 `test-writer`，回傳「8 個測試已加」     |
 
 每一次委派，**主對話的 context 只多了一段精煉摘要**，雜訊全留在 sub-agent 用完即棄的 context window。
 
@@ -86,13 +86,13 @@ You are a code reviewer. When invoked, analyze the code...
 
 關鍵欄位：
 
-| 欄位          | 必要 | 說明                                                              |
-| :------------ | :--: | :---------------------------------------------------------------- |
-| `name`        | ✅   | 小寫 + hyphen，例如 `code-reviewer`                               |
-| `description` | ✅   | **何時該派這個 agent** — Claude 用這段決定要不要委派              |
-| `tools`       |      | 允許用的工具白名單（省略 = 繼承全部）                             |
-| `model`       |      | `sonnet` / `opus` / `haiku` / `inherit`                           |
-| `color`       |      | UI 顯示用的顏色                                                   |
+| 欄位          | 必要 | 說明                                                 |
+| :------------ | :--: | :--------------------------------------------------- |
+| `name`        |  ✅  | 小寫 + hyphen，例如 `code-reviewer`                  |
+| `description` |  ✅  | **何時該派這個 agent** — Claude 用這段決定要不要委派 |
+| `tools`       |      | 允許用的工具白名單（省略 = 繼承全部）                |
+| `model`       |      | `sonnet` / `opus` / `haiku` / `inherit`              |
+| `color`       |      | UI 顯示用的顏色                                      |
 
 `description` 寫得好不好，決定 Claude 會不會**主動派**這個 agent — 比 system prompt 還重要。
 
@@ -140,14 +140,14 @@ claude-harness-template/
 
 ## 六個 Sub-agent 一覽
 
-| Agent              | 工具         | 模型   | 何時被派                                                |
-| :----------------- | :----------- | :----- | :------------------------------------------------------ |
-| `code-reviewer`    | Read-only    | sonnet | 任何非瑣碎的程式碼變更之後                              |
-| `migration-writer` | Read + Write | sonnet | Entity 改了 → 需要 TypeORM migration                    |
-| `test-writer`      | Read + Write | sonnet | 新 feature 或 bug fix → Jest + NestJS 測試              |
-| `graphql-feature`  | Read + Write | sonnet | 新 GraphQL query/mutation/subscription 端到端           |
-| `frontend-feature` | Read + Write | sonnet | 新 Next.js page 或 Apollo + Chakra 功能                 |
-| `nx-lib-creator`   | Read + Write | sonnet | 需要新 lib → `nx g @nx/js:lib` + tsconfig + barrel      |
+| Agent              | 工具         | 模型   | 何時被派                                           |
+| :----------------- | :----------- | :----- | :------------------------------------------------- |
+| `code-reviewer`    | Read-only    | sonnet | 任何非瑣碎的程式碼變更之後                         |
+| `migration-writer` | Read + Write | sonnet | Entity 改了 → 需要 TypeORM migration               |
+| `test-writer`      | Read + Write | sonnet | 新 feature 或 bug fix → Jest + NestJS 測試         |
+| `graphql-feature`  | Read + Write | sonnet | 新 GraphQL query/mutation/subscription 端到端      |
+| `frontend-feature` | Read + Write | sonnet | 新 Next.js page 或 Apollo + Chakra 功能            |
+| `nx-lib-creator`   | Read + Write | sonnet | 需要新 lib → `nx g @nx/js:lib` + tsconfig + barrel |
 
 每個 agent 的 system prompt 我不再貼進文章（完整內容請看 [Peter-To-Better/claude-harness-template](https://github.com/Peter-To-Better/claude-harness-template/tree/main/.claude/agents) repo）。下面我直接挑**每個 agent 最關鍵的一條設計決策**講：
 
